@@ -5,10 +5,10 @@
 **이 섹션은 현재 개발 중입니다.
 
 주제
-- ChatGPT 소개](#chatgpt-introduction)
-- 대화 과제 검토하기](#reviewing-the-conversation-task)
-- ChatGPT로 대화하기](#conversations-with-chatgpt)
-- 파이썬 노트북](#python-notebooks)
+- [ChatGPT 소개](#chatgpt-introduction)
+- [대화 과제 검토하기](#reviewing-the-conversation-task)
+- [ChatGPT로 대화하기](#conversations-with-chatgpt)
+- [파이썬 노트북](#python-notebooks)
 
 ---
 ## ChatGPT 소개
