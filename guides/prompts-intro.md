@@ -6,13 +6,13 @@
 
 모든 예제는 달리 명시되지 않는 한 `텍스트-davinci-003`(OpenAI의 플레이그라운드 사용)으로 테스트되었습니다. 기본 구성(예: `temperature=0.7` 및 `top-p=1`)을 사용합니다.
 
-Topic:
-- [Basic Prompts](#basic-prompts)
-- [A Word on LLM Settings](#a-word-on-llm-settings)
-- [Standard Prompts](#standard-prompts)
-- [Prompt Elements](#elements-of-a-prompt)
-- [General Tips for Designing Prompts](#general-tips-for-designing-prompts)
 
+주제:
+- [기본 프롬프트](#기본-프롬프트)
+- [LLM 설정에 대한 한마디](#a-word-on-llm-settings)
+- [표준 프롬프트](#표준-프롬프트)
+- [프롬프트 요소](#elements-of-a-prompt)
+- [프롬프트 디자인을 위한 일반 팁](#일반-팁-디자인-프롬프트)
 ---
 
 ## 기본 프롬프트
