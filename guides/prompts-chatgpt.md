@@ -43,7 +43,7 @@ AI:
 
 Snap Inc. 및 Instacart와 같은 대기업은 이미 개인화된 추천부터 개방형 쇼핑 목표에 이르기까지 다양한 제품에 ChatGPT로 구동되는 대화 기능을 통합하고 있습니다.
 
---- Translated with www.DeepL.com/Translator (free version)
+---
 
 ChatGPT와의 대화 ###
 
