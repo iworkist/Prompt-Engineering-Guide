@@ -137,48 +137,48 @@ Negative
 몇 개의 예제만 주어져도 언어 모델이 작업을 학습할 수 있는 기능인 상황에 맞는 학습이 가능합니다. 향후 가이드에서 이 기능에 대해 더 자세히 살펴볼 예정입니다.
 
 ---
-## Elements of a Prompt
+## 프롬프트의 요소 ##
 
-As we cover more and more examples and applications that are possible with prompt engineering, you will notice that there are certain elements that make up a prompt. 
+프롬프트 엔지니어링으로 가능한 더 많은 예제와 애플리케이션을 다루면서 프롬프트를 구성하는 특정 요소가 있다는 것을 알게 될 것입니다.
 
-A prompt can contain any of the following components:
+프롬프트에는 다음 구성 요소가 포함될 수 있습니다:
 
-**Instruction** - a specific task or instruction you want the model to perform
+**명령어** - 모델이 수행하기를 원하는 특정 작업 또는 명령어
 
-**Context** - can involve external information or additional context that can steer the model to better responses
+**컨텍스트** - 모델이 더 나은 응답을 하도록 유도할 수 있는 외부 정보 또는 추가 컨텍스트를 포함할 수 있습니다.
 
-**Input Data** - is the input or question that we are interested to find a response for
+**입력 데이터** - 응답을 찾고자 하는 입력 또는 질문입니다.
 
-**Output Indicator** - indicates the type or format of output.
+**출력 표시기** - 출력의 유형 또는 형식을 나타냅니다.
 
-Not all the components are required for a prompt and the format depends on the task at hand. We will touch on more concrete examples in upcoming guides.
+프롬프트에 모든 구성 요소가 필요한 것은 아니며 형식은 작업에 따라 다릅니다. 다음 가이드에서 좀 더 구체적인 예를 다루겠습니다.
 
 ---
-## General Tips for Designing Prompts
 
-Here are some tips to keep in mind while you are designing your prompts:
+## 프롬프트 디자인을 위한 일반적인 팁 ##
 
+다음은 프롬프트를 디자인할 때 염두에 두어야 할 몇 가지 팁입니다:
 
-### Start Simple
-As you get started with designing prompts, you should keep in mind that it is really an iterative process that requires lot of experimentation to get optimal results. Using a simple playground like OpenAI's or Cohere's is a good starting point. 
+### 간단하게 시작하기
+프롬프트 디자인을 시작할 때, 최적의 결과를 얻기 위해 많은 실험이 필요한 반복적인 과정이라는 점을 명심해야 합니다. OpenAI나 Cohere와 같은 간단한 플레이그라운드를 사용하는 것이 좋은 출발점이 될 수 있습니다.
 
-You can start with simple prompts and keep adding more elements and context as you aim for better results. Versioning your prompt along the way is vital for this reason. As we read the guide you will see many examples where specificity, simplicity, and conciseness will often give you better results.
+간단한 프롬프트로 시작하여 더 나은 결과를 목표로 더 많은 요소와 컨텍스트를 계속 추가할 수 있습니다. 이러한 이유로 프롬프트의 버전 관리가 매우 중요합니다. 가이드를 읽다 보면 구체성, 단순성, 간결성을 통해 더 나은 결과를 얻을 수 있는 많은 예를 볼 수 있습니다.
 
-When you have big task that involves many different subtasks, you can try to break down the task into simpler subtasks and keep building up as you get better results. This avoids adding too much complexity to the prompt design process at the beginning.
+여러 가지 하위 작업이 포함된 큰 작업의 경우, 작업을 더 간단한 하위 작업으로 세분화하여 더 나은 결과를 얻을 때까지 계속 쌓아나갈 수 있습니다. 이렇게 하면 처음에 프롬프트 디자인 프로세스에 너무 많은 복잡성을 추가하는 것을 방지할 수 있습니다.
 
-### The Instruction
-You can design effective prompts for various simple tasks by using commands to instruct the model what you want to achieve such as "Write", "Classify", "Summarize", "Translate", "Order", etc.
+### 안내
+"쓰기", "분류", "요약", "번역", "정렬" 등과 같이 모델에 원하는 작업을 지시하는 명령을 사용하여 다양한 간단한 작업에 대한 효과적인 프롬프트를 디자인할 수 있습니다.
 
-Keep in mind that you also need to experiment a lot so see what works best. Trying different instructions with different keywords, context, and data and see what works best for your particular use case and task. Usually, the more specific and relevant the context is to the task you are trying to perform, the better. We will touch on the importance of sampling and adding more context in the upcoming guides.
+무엇이 가장 효과적인지 알기 위해서는 많은 실험이 필요하다는 점을 명심하세요. 다양한 키워드, 컨텍스트, 데이터로 다양한 안내를 시도해 보고 특정 사용 사례와 작업에 가장 적합한 것이 무엇인지 확인하세요. 일반적으로 컨텍스트가 수행하려는 작업과 더 구체적이고 관련성이 높을수록 더 좋습니다. 다음 가이드에서 샘플링과 더 많은 컨텍스트 추가의 중요성에 대해 다룰 예정입니다.
 
-Others recommend that instructions are placed at the beginning of the prompt. It's also recommended that some clear separator like "###" is used to separate the instruction and context. 
+프롬프트의 시작 부분에 지침을 배치하는 것이 좋다는 의견도 있습니다. 또한 '###'과 같은 명확한 구분 기호를 사용하여 지침과 문맥을 구분하는 것이 좋습니다.
 
-For instance:
+예를 들어
 
 *Prompt:*
 ```
-### Instruction ###
-Translate the text below to Spanish:
+### 지침 ###
+아래 텍스트를 스페인어로 번역하세요:
 
 Text: "hello!"
 ```
@@ -188,77 +188,79 @@ Text: "hello!"
 ¡Hola!
 ```
 
-### Specificity
-Be very specific about the instruction and task you want the model to perform. The more descriptive and detailed the prompt is, the better the results. This is particularly important when you have a desired outcome or style of generation you are seeking. There aren't specific tokens or keywords that lead to better results. It's more important to have a good format and descriptive prompt. In fact, providing examples in the prompt is very effective to get desired output in specific formats. 
+### 구체성
+모델이 수행하기를 원하는 명령과 작업에 대해 매우 구체적으로 설명하세요. 프롬프트가 더 설명적이고 상세할수록 더 나은 결과를 얻을 수 있습니다. 이는 원하는 결과나 생성 스타일이 있을 때 특히 중요합니다. 더 나은 결과로 이어지는 특정 토큰이나 키워드는 없습니다. 좋은 형식과 설명적인 프롬프트가 더 중요합니다. 실제로 프롬프트에 예시를 제공하는 것은 특정 형식의 원하는 결과물을 얻는 데 매우 효과적입니다.
 
-When designing prompts you should also keep in mind the length of the prompt as there are limitations regarding how long this can be. Thinking about how specific and detailed you should be is something to consider. Too many unnecessary details is not necessarily a good approach. The details should be relevant and contribute to the task at hand. This is something you will need to experiment with a lot. We encourage a lot of experimentation and iteration to optimize prompts for your applications.
+프롬프트를 디자인할 때는 프롬프트의 길이에 제한이 있으므로 프롬프트의 길이도 염두에 두어야 합니다. 얼마나 구체적이고 상세해야 하는지도 고려해야 할 사항입니다. 불필요한 세부 정보가 너무 많다고 해서 반드시 좋은 방법은 아닙니다. 세부 사항은 관련성이 있어야 하며 당면한 작업에 기여해야 합니다. 이것은 많은 실험이 필요한 부분입니다. 애플리케이션에 맞게 프롬프트를 최적화하기 위해 많은 실험과 반복을 권장합니다.
 
-As an example, let's try a simple prompt to extract specific information from a piece of text.
+예를 들어 텍스트에서 특정 정보를 추출하는 간단한 프롬프트를 만들어 보겠습니다.
 
 *Prompt:*
 ```
-Extract the name of places in the following text. 
+다음 텍스트에서 장소 이름을 추출합니다.
 
-Desired format:
-Place: <comma_separated_list_of_company_names>
+원하는 형식입니다:
+장소: <컴마로 구분된_회사명_목록>
 
-Input: "Although these developments are encouraging to researchers, much is still a mystery. “We often have a black box between the brain and the effect we see in the periphery,” says Henrique Veiga-Fernandes, a neuroimmunologist at the Champalimaud Centre for the Unknown in Lisbon. “If we want to use it in the therapeutic context, we actually need to understand the mechanism.""
+입력: "이러한 발전은 연구자들에게 고무적이지만 여전히 많은 부분이 미스테리입니다. "우리는 종종 뇌와 말초에서 보이는 효과 사이에 블랙박스가 존재합니다."라고 리스본에 있는 샹팔리모드 미지의 센터의 신경면역학자인 헨리크 베이가-페르난데스는 말합니다. "치료적 맥락에서 이를 사용하려면 실제로 그 메커니즘을 이해해야 합니다.""
 ```
 
 *Output:*
 ```
-Place: Champalimaud Centre for the Unknown, Lisbon
+장소 샹팔리모드 미지의 센터, 리스본
 ```
 
-Input text is obtained from [this Nature article](https://www.nature.com/articles/d41586-023-00509-z).
+입력 텍스트는 [이 네이처 기사](https://www.nature.com/articles/d41586-023-00509-z)에서 가져온 것입니다.
 
-### Avoid Impreciseness
+### 부정확성 방지
 
-Given the tips above about being detailed and improving format, it's easy to fall into the trap of wanting to be too clever about prompts and potentially creating imprecise descriptions. It's often better to be specific and direct. The analogy here is very similar to effective communication -- the more direct, the more effective the message gets across.
+상세하게 작성하고 형식을 개선하는 방법에 대한 위의 팁을 고려할 때, 프롬프트에 대해 너무 똑똑해지려고 해서 부정확한 설명을 만들 수 있는 함정에 빠지기 쉽습니다. 구체적이고 직접적으로 설명하는 것이 더 좋은 경우가 많습니다. 이는 효과적인 커뮤니케이션과 매우 유사하며, 직접적일수록 메시지가 더 효과적으로 전달됩니다.
 
-For example, you might be interested in learning the concept of prompt engineering. You might try something like:
+예를 들어 프롬프트 엔지니어링의 개념을 배우고 싶을 수 있습니다. 다음과 같이 시도해 볼 수 있습니다:
 
-```
-Explain the concept prompt engineering. Keep the explanation short, only a few sentences, and don't be too descriptive.
-```
-
-It's not clear from the prompt above how many sentences to use and what style. You might still somewhat get good responses with the above prompts but the better prompt would be one that is very specific, concise, and to the point. Something like:
 
 ```
-Use 2-3 sentences to explain the concept of prompt engineering to a high school student.
+프롬프트 엔지니어링의 개념을 설명하세요. 설명은 몇 문장으로 짧게 하되 너무 장황하게 설명하지 마세요.
 ```
 
-### To do or not to do?
-Another common tip when designing prompts is to avoid saying what not to do but say what to do instead. This encourages more specificity and focus on the details that lead to good responses from the model.
+위의 프롬프트에서는 몇 개의 문장을 사용해야 하는지, 어떤 스타일을 사용해야 하는지 명확하지 않습니다. 위의 프롬프트로도 어느 정도 좋은 응답을 얻을 수 있지만, 더 좋은 프롬프트는 매우 구체적이고 간결하며 요점을 파악할 수 있는 프롬프트입니다. 예를 들면 다음과 같습니다:
 
-Here is an example of movie recommendation chatbot failing at exactly what I don't want it to do because of how I wrote the instruction -- focusing on what not to do. 
+```
+고등학생에게 프롬프트 엔지니어링의 개념을 2~3문장으로 설명하세요.
+```
+
+### 해야 할 일과 하지 말아야 할 일?
+프롬프트를 디자인할 때의 또 다른 일반적인 팁은 하지 말아야 할 것을 말하지 말고 대신 해야 할 것을 말하는 것입니다. 이렇게 하면 보다 구체적이고 세부적인 사항에 집중하여 모델의 좋은 반응을 이끌어낼 수 있습니다.
+
+다음은 영화 추천 챗봇이 하지 말아야 할 것에 초점을 맞춰 명령어를 작성했기 때문에 원하지 않는 작업을 정확히 수행하지 못한 예입니다.
+
 
 *Prompt:*
 ```
-The following is an agent that recommends movies to a customer. DO NOT ASK FOR INTERESTS. DO NOT ASK FOR PERSONAL INFORMATION.
+다음은 고객에게 영화를 추천하는 상담원입니다. 관심사를 묻지 마시고. 개인 정보를 묻지 마세요.
 
-Customer: Please recommend a movie based on my interests.
-Agent: 
+고객님: 제 관심사에 맞는 영화를 추천해 주세요.
+상담원:
 ```
 
 *Output:*
 ```
-Sure, I can recommend a movie based on your interests. What kind of movie would you like to watch? Do you prefer action, comedy, romance, or something else?
+물론 회원님의 관심사에 따라 영화를 추천해 드릴 수 있습니다. 어떤 종류의 영화를 보고 싶으신가요? 액션, 코미디, 로맨스 또는 다른 것을 선호하시나요?
 ```
 
-Here is a better prompt:
+더 나은 프롬프트는 다음과 같습니다:
 
 *Prompt:*
 ```
-The following is an agent that recommends movies to a customer. The agent is responsible to recommend a movie from the top global trending movies. It should refrain from asking users for their preferences and avoid asking for personal information. If the agent doesn't have a movie to recommend, it should respond "Sorry, couldn't find a movie to recommend today.".
+다음은 고객에게 영화를 추천하는 상담원입니다. 상담원은 글로벌 인기 영화 중에서 영화를 추천할 책임이 있습니다. 상담원은 사용자의 선호도를 묻지 않고 개인 정보를 요구하지 않아야 합니다. 상담원이 추천할 영화가 없는 경우 "죄송합니다, 오늘 추천할 영화를 찾을 수 없습니다."라고 응답해야 합니다.
 
-Customer: Please recommend a movie based on my interests.
-Agent:
+고객님: 제 관심사에 맞는 영화를 추천해 주세요.
+상담원: 네:
 ```
 
 *Output:*
 ```
-Sorry, I don't have any information about your interests. However, here's a list of the top global trending movies right now: [list of movies]. I hope you find something you like!
+죄송합니다. 관심사에 대한 정보가 없습니다. 하지만 현재 전 세계에서 가장 인기 있는 영화 목록은 다음과 같습니다: [영화 목록]을 확인하세요. 마음에 드는 영화를 찾으시길 바랍니다!
 ```
 
 Some of the examples above were adopted from the ["Best practices for prompt engineering with OpenAI API" article.](https://help.openai.com/en/articles/6654000-best-practices-for-prompt-engineering-with-openai-api)
