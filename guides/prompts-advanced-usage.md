@@ -1,28 +1,27 @@
-# Advanced Prompting
-By this point, it should be obvious that it helps to improve prompts to get better results on different tasks. That's the whole idea behind prompt engineering. 
+# 고급 프롬프트
+이쯤 되면 다양한 작업에서 더 나은 결과를 얻기 위해 프롬프트를 개선하는 것이 도움이 된다는 것을 알 수 있을 것입니다. 이것이 바로 프롬프트 엔지니어링의 기본 개념입니다.
 
-While those examples were fun, let's cover a few concepts more formally before we jump into more advanced concepts. 
+지금까지 살펴본 예는 재미있었지만, 좀 더 고급 개념으로 넘어가기 전에 몇 가지 개념을 좀 더 공식적으로 다루어 보겠습니다.
 
-Topics:
+주제:
 
-- [Zero-shot Prompting](#zero-shot-prompting)
-- [Few-shot Prompting](#few-shot-prompting)
-- [Chain-of-Thought Prompting](#chain-of-thought-prompting)
-- [Zero-shot CoT](#zero-shot-cot)
-- [Self-Consistency](#self-consistency)
-- [Generate Knowledge Prompting](#generated-knowledge-prompting)
-- [Automatic Prompt Engineer](#automatic-prompt-engineer-ape)
+- [제로샷 프롬프트](#제로샷-프롬프트)
+- [단발성 프롬프트](#단발성-프롬프트)
+- [생각의 사슬 프롬프트](#체인-오브-씽크-프롬프트)
+- [제로샷 코트](#제로샷-코트)
+- [자기 일관성](#자기-일관성)
+- [지식 프롬프트 생성](#생성된지식-프롬프트)
+- [자동 프롬프트 엔지니어](#자동-프롬프트-엔지니어-에이프)
 
 ---
-## Zero-Shot Prompting
-LLMs today trained on large amounts of data and tuned to follow instructions, are capable of performing tasks zero-shot. We tried a few zero-shot examples in the previous section. Here is one of the examples we used:
+## 제로 샷 프롬프트
+대량의 데이터를 학습하고 지침을 따르도록 튜닝된 오늘날의 머신러닝은 제로샷으로 작업을 수행할 수 있습니다. 이전 섹션에서 몇 가지 제로 샷 예제를 시도해 보았습니다. 다음은 우리가 사용한 예제 중 하나입니다:
 
-*Prompt:*
+*프롬프트:*
 ```
-Classify the text into neutral, negative, or positive. 
-
-Text: I think the vacation is okay.
-Sentiment:
+텍스트를 중립, 부정 또는 긍정으로 분류합니다.
+텍스트: 휴가는 괜찮을 것 같아요.
+감정:
 ```
 
 *Output:*
@@ -30,45 +29,46 @@ Sentiment:
 Neutral
 ```
 
-Note that in the prompt above we didn't provide the model with any examples -- that's the zero-shot capabilities at work. When zero-shot doesn't work, it's recommended to provide demonstrations or examples in the prompt. Below we discuss the approach known as few-shot prompting.
+위의 프롬프트에서는 모델에 예제를 제공하지 않았는데, 이는 제로 샷 기능이 작동하는 방식입니다. 제로 샷이 작동하지 않는 경우 프롬프트에 데모 또는 예제를 제공하는 것이 좋습니다. 아래에서는 제로 샷 프롬프트로 알려진 접근 방식에 대해 설명합니다.
 
 ---
-## Few-Shot Prompting
 
-While large-language models already demonstrate remarkable zero-shot capabilities, they still fall short on more complex tasks when using the zero-shot setting. To improve on this, few-shot prompting is used as a technique to enable in-context learning where we provide demonstrations in the prompt to steer the model to better performance. The demonstrations serve as conditioning for subsequent examples where we would like the model to generate a response. 
+## 몇 컷 프롬프트
 
-Let's demonstrate few-shot prompting via an example that was presented by [Brown et al. 2020](https://arxiv.org/abs/2005.14165). In the example, the task is to correctly use a new word in a sentence.
+대규모 언어 모델은 이미 뛰어난 제로 샷 기능을 보여주고 있지만, 제로 샷 설정을 사용할 때 더 복잡한 작업에서는 여전히 부족합니다. 이를 개선하기 위해 몇 샷 프롬프트는 프롬프트에서 데모를 제공하여 모델이 더 나은 성능을 발휘하도록 유도하는 인컨텍스트 학습을 가능하게 하는 기술로 사용됩니다. 이 데모는 모델이 응답을 생성하기를 원하는 후속 예제에 대한 조건부 역할을 합니다.
 
-*Prompt:*
+브라운 외 2020](https://arxiv.org/abs/2005.14165)에서 제시된 예제를 통해 몇 번 촬영한 프롬프트를 시연해 보겠습니다. 이 예제에서는 문장에서 새로운 단어를 올바르게 사용하는 것이 과제입니다.
+
+*프롬프트:*
 ```
-A "whatpu" is a small, furry animal native to Tanzania. An example of a sentence that uses
-the word whatpu is:
-We were traveling in Africa and we saw these very cute whatpus.
-To do a "farduddle" means to jump up and down really fast. An example of a sentence that uses
-the word farduddle is:
-```
-
-*Output:*
-```
-When we won the game, we all started to farduddle in celebration.
+"왓푸"는 탄자니아에 서식하는 작고 털이 많은 동물입니다. 이 단어를 사용하는 문장의 예
+라는 단어를 사용하는 문장의 예입니다:
+우리는 아프리카를 여행하고 있었는데 아주 귀여운 왓푸를 봤어요.
+"파더들"을 한다는 것은 정말 빠르게 위아래로 점프한다는 뜻입니다. 파더들을 사용하는 문장의 예
+를 사용하는 문장의 예는 다음과 같습니다:
 ```
 
-We can observe that the model has somehow learned how to perform the task by providing it with just one example (i.e., 1-shot). For more difficult tasks, we can experiment with increasing the demonstrations (e.g., 3-shot, 5-shot, 10-shot, etc.). 
-
-Following the findings from [Min et al. (2022)](https://arxiv.org/abs/2202.12837), here are a few more tips about demonstrations/exemplars when doing few-shot:
-
-- "the label space and the distribution of the input text specified by the demonstrations are both important (regardless of whether the labels are correct for individual inputs)"
-- the format you use also plays a key role in performance, even if you just use random labels, this is much better than no labels at all.  
-- additional results show that selecting random labels from a true distribution of labels (instead of a uniform distribution) also helps.
-
-Let's try out a few examples. Let's first try an example with random labels (meaning the labels Negative and Positive are randomly assigned to the inputs):
-
-*Prompt:*
+*출력:*
 ```
-This is awesome! // Negative
-This is bad! // Positive
-Wow that movie was rad! // Positive
-What a horrible show! //
+우리가 게임에서 이겼을 때, 우리는 모두 축하하기 위해 파더들을 시작했습니다.
+```
+
+모델에 단 하나의 예시(즉, 1샷)만 제공함으로써 모델이 어떻게든 과제를 수행하는 방법을 학습했음을 관찰할 수 있습니다. 더 어려운 과제의 경우 데모 횟수를 늘리는 실험을 할 수 있습니다(예: 3샷, 5샷, 10샷 등).
+
+Min et al. (2022)](https://arxiv.org/abs/2202.12837)의 연구 결과에 따라, 다음은 소수 샷을 수행할 때 데모/예시에 대한 몇 가지 추가 팁입니다:
+
+- "라벨 공간과 데모에서 지정한 입력 텍스트의 분포는 모두 중요하다(개별 입력에 대해 라벨이 올바른지 여부와 관계없이)."
+- 사용하는 형식도 성능에 중요한 역할을 하며, 무작위 레이블을 사용하더라도 레이블이 전혀 없는 것보다 훨씬 낫습니다.  
+- 추가 결과에 따르면 라벨의 실제 분포에서 (균일한 분포 대신) 무작위 라벨을 선택하는 것도 도움이 되는 것으로 나타났습니다.
+
+몇 가지 예를 살펴보겠습니다. 먼저 무작위 레이블을 사용하는 예제를 시도해 보겠습니다(즉, 부정과 긍정 레이블이 입력에 무작위로 할당됨):
+
+*프롬프트:*
+```
+멋지네요! // 부정
+이건 나쁘다! // 긍정
+와우 그 영화 진짜 끝내줬어요! // 긍정
+정말 끔찍한 쇼! //
 ```
 
 *Output:*
@@ -76,344 +76,319 @@ What a horrible show! //
 Negative
 ```
 
-We still get the correct answer, even though the labels have been randomized. Note that we also kept the format, which helps too. In fact, with further experimentation, it seems the newer GPT models we are experimenting with are becoming more robust to even random formats. Example:
+레이블이 무작위로 지정되었지만 여전히 정답을 얻습니다. 형식도 그대로 유지한 것도 도움이 됩니다. 실제로 추가 실험을 통해 우리가 실험하고 있는 최신 GPT 모델은 무작위 형식에도 더 강력해지고 있는 것으로 보입니다. 예시:
 
-*Prompt:*
+
+*프롬프트:*
 ```
-Positive This is awesome! 
-This is bad! Negative
-Wow that movie was rad!
-Positive
-What a horrible show! --
+긍정 이거 굉장하다!
+이건 나쁘다! 부정적
+와우, 그 영화 끝내줬어요!
+긍정적
+정말 끔찍한 쇼! --
 ```
 
-*Output:*
+*출력:*
 ```
 Negative
 ```
 
-There is no consistency in the format above but the model still predicted the correct label. We have to conduct a more thorough analysis to confirm if this holds for different and more complex tasks, including different variations of prompts.
+위의 형식에는 일관성이 없지만 모델은 여전히 올바른 레이블을 예측했습니다. 다양한 프롬프트의 변형을 포함하여 더 다양하고 복잡한 작업에서도 이러한 결과가 유지되는지 확인하기 위해 더 철저한 분석을 수행해야 합니다.
 
-### Limitations of Few-shot Prompting
 
-Standard few-shot prompting works well for many tasks but is still not a perfect technique, especially when dealing with more complex reasoning tasks. Let's demonstrate why this is the case. Do you recall the previous example where we provided the following task:
+몇 샷 프롬프트의 한계 ###
 
-```
-The odd numbers in this group add up to an even number: 15, 32, 5, 13, 82, 7, 1. 
-
-A: 
-```
-
-If we try this again, the model outputs the following:
+표준 단답형 프롬프트는 많은 작업에서 잘 작동하지만, 특히 복잡한 추론 작업을 처리할 때 완벽한 기술은 아닙니다. 그 이유를 설명해 보겠습니다. 다음 작업을 제공했던 이전 예시를 기억하시나요?
 
 ```
-Yes, the odd numbers in this group add up to 107, which is an even number.
-```
-
-This is not the correct response, which not only highlights the limitations of these systems but that there is a need for more advanced prompt engineering. 
-
-Let's try to add some examples to see if few-shot prompting improves the results.
-
-*Prompt:*
-```
-The odd numbers in this group add up to an even number: 4, 8, 9, 15, 12, 2, 1.
-A: The answer is False.
-
-The odd numbers in this group add up to an even number: 17,  10, 19, 4, 8, 12, 24.
-A: The answer is True.
-
-The odd numbers in this group add up to an even number: 16,  11, 14, 4, 8, 13, 24.
-A: The answer is True.
-
-The odd numbers in this group add up to an even number: 17,  9, 10, 12, 13, 4, 2.
-A: The answer is False.
-
-The odd numbers in this group add up to an even number: 15, 32, 5, 13, 82, 7, 1. 
-A: 
-```
-
-*Output:*
-```
-The answer is True.
-```
-
-That didn't work. It seems like few-shot prompting is not enough to get reliable responses for this type of reasoning problem. The example above provides basic information on the task. If you take a closer look, the type of task we have introduced involves a few more reasoning steps. In other words, it might help if we break the problem down into steps and demonstrate that to the model. More recently, [chain-of-thought (CoT) prompting](https://arxiv.org/abs/2201.11903) has been popularized to address more complex arithmetic, commonsense, and symbolic reasoning tasks.
-
-Overall, it seems that providing examples is useful for solving some tasks. When zero-shot prompting and few-shot prompting are not sufficient, it might mean that whatever was learned by the model isn't enough to do well at the task. From here it is recommended to start thinking about fine-tuning your models or experimenting with more advanced prompting techniques. Up next we talk about one of the popular prompting techniques called chain-of-thought prompting which has gained a lot of popularity. 
-
----
-
-## Chain-of-Thought Prompting
-
-Introduced in [Wei et al. (2022)](https://arxiv.org/abs/2201.11903), chain-of-thought (CoT) prompting enables complex reasoning capabilities through intermediate reasoning steps. You can combine it with few-shot prompting to get better results on more complex tasks that require reasoning before responding.
-
-*Prompt:*
-```
-The odd numbers in this group add up to an even number: 4, 8, 9, 15, 12, 2, 1.
-A: Adding all the odd numbers (9, 15, 1) gives 25. The answer is False.
-
-The odd numbers in this group add up to an even number: 17,  10, 19, 4, 8, 12, 24.
-A: Adding all the odd numbers (17, 19) gives 36. The answer is True.
-
-The odd numbers in this group add up to an even number: 16,  11, 14, 4, 8, 13, 24.
-A: Adding all the odd numbers (11, 13) gives 24. The answer is True.
-
-The odd numbers in this group add up to an even number: 17,  9, 10, 12, 13, 4, 2.
-A: Adding all the odd numbers (17, 9, 13) gives 39. The answer is False.
-
-The odd numbers in this group add up to an even number: 15, 32, 5, 13, 82, 7, 1. 
+이 그룹의 홀수는 15, 32, 5, 13, 82, 7, 1로 짝수로 합산됩니다.
 A:
 ```
 
-*Output:*
+이 작업을 다시 시도하면 모델이 다음과 같이 출력합니다:
+
 ```
-Adding all the odd numbers (15, 5, 13, 7, 1) gives 41. The answer is False.
+예, 이 그룹의 홀수는 짝수인 107을 더합니다.
 ```
 
-Wow! We can see a perfect result when we provided the reasoning step. We can solve this task by providing even fewer examples, i.e., just one example seems enough:
+이는 정답이 아니며, 이러한 시스템의 한계를 보여줄 뿐만 아니라 보다 발전된 프롬프트 엔지니어링이 필요하다는 것을 강조합니다.
 
-*Prompt:*
+몇 가지 예를 추가하여 몇 번의 촬영으로 프롬프트가 결과를 개선하는지 확인해 보겠습니다.
+
+*프롬프트:*
 ```
-The odd numbers in this group add up to an even number: 4, 8, 9, 15, 12, 2, 1.
-A: Adding all the odd numbers (9, 15, 1) gives 25. The answer is False.
-
-The odd numbers in this group add up to an even number: 15, 32, 5, 13, 82, 7, 1. 
+이 그룹의 홀수는 4, 8, 9, 15, 12, 2, 1과 같이 짝수로 합산됩니다.
+A: 정답은 거짓입니다.
+이 그룹의 홀수는 17, 10, 19, 4, 8, 12, 24와 같이 짝수로 합산됩니다.
+A: 정답은 참입니다.
+이 그룹의 홀수는 16, 11, 14, 4, 8, 13, 24와 같이 짝수로 합산됩니다.
+A: 답은 참입니다.
+이 그룹의 홀수는 17, 9, 10, 12, 13, 4, 2와 같이 짝수로 합산됩니다.
+A: 답은 거짓입니다.
+이 그룹의 홀수는 15, 32, 5, 13, 82, 7, 1과 같이 짝수로 합산됩니다.
 A:
 ```
 
-*Output:*
+*출력:*
 ```
-Adding all the odd numbers (15, 5, 13, 7, 1) gives 41. The answer is False.
+대답은 True입니다.
 ```
 
-Keep in mind that the authors claim that this is an emergent ability that arises with sufficiently large language models. 
+작동하지 않았습니다. 이러한 유형의 추론 문제에 대해 신뢰할 수 있는 답변을 얻으려면 몇 번의 프롬프트만으로는 충분하지 않은 것 같습니다. 위의 예는 작업에 대한 기본 정보를 제공합니다. 자세히 살펴보면 우리가 소개한 과제 유형에는 몇 가지 추론 단계가 더 포함되어 있습니다. 즉, 문제를 여러 단계로 세분화하고 이를 모델에 시연하면 도움이 될 수 있습니다. 최근에는 더 복잡한 산술, 상식, 상징적 추론 작업을 처리하기 위해 [생각의 사슬(CoT) 프롬프트](https://arxiv.org/abs/2201.11903)가 대중화되었습니다.
+
+전반적으로 예제를 제공하는 것이 일부 과제를 해결하는 데 유용한 것으로 보입니다. 제로 샷 프롬프트와 소수 샷 프롬프트가 충분하지 않은 경우 모델이 학습한 내용이 해당 작업을 잘 수행하기에 충분하지 않다는 의미일 수 있습니다. 이때부터 모델을 미세 조정하거나 고급 프롬프트 기법을 실험해 보는 것이 좋습니다. 다음에는 많은 인기를 얻고 있는 연쇄적 사고 프롬프트라는 인기 있는 프롬프트 기법 중 하나에 대해 이야기하겠습니다.
 
 ---
 
-## Zero-Shot CoT
+생각의 연결 고리 프롬프트 ##
 
-One recent idea that came out more recently is the idea of [zero-shot CoT](https://arxiv.org/abs/2205.11916) (Kojima et al. 2022) that essentially involves adding "Let's think step by step" to the original prompt. Let's try a simple problem and see how the model performs:
+Wei 외(2022)](https://arxiv.org/abs/2201.11903)에서 소개된 연쇄 사고(CoT) 프롬프트는 중간 추론 단계를 통해 복잡한 추론 기능을 구현할 수 있습니다. 이를 단답형 프롬프트와 결합하여 응답하기 전에 추론이 필요한 복잡한 작업에서 더 나은 결과를 얻을 수 있습니다.
 
-*Prompt:*
+*프롬프트:*
 ```
-I went to the market and bought 10 apples. I gave 2 apples to the neighbor and 2 to the repairman. I then went and bought 5 more apples and ate 1. How many apples did I remain with?
-```
-
-*Output:*
-```
-11 apples
-```
-
-The answer is incorrect! Now Let's try with the special prompt. 
-
-*Prompt:*
-```
-I went to the market and bought 10 apples. I gave 2 apples to the neighbor and 2 to the repairman. I then went and bought 5 more apples and ate 1. How many apples did I remain with?
-
-Let's think step by step.
+이 그룹의 홀수는 4, 8, 9, 15, 12, 2, 1과 같이 짝수로 합산됩니다.
+A: 홀수(9, 15, 1)를 모두 더하면 25가 됩니다. 정답은 거짓입니다.
+이 그룹의 홀수는 17, 10, 19, 4, 8, 12, 24와 같이 짝수로 합산됩니다.
+답: 홀수(17, 19)를 모두 더하면 36이 됩니다. 정답은 참입니다.
+이 그룹의 홀수는 16, 11, 14, 4, 8, 13, 24로 짝수가 됩니다.
+답: 홀수(11, 13)를 모두 더하면 24가 됩니다. 정답은 참입니다.
+이 그룹의 홀수는 17, 9, 10, 12, 13, 4, 2로 짝수가 됩니다.
+A: 홀수(17, 9, 13)를 모두 더하면 39가 됩니다. 정답은 거짓입니다.
+이 그룹의 홀수는 15, 32, 5, 13, 82, 7, 1과 같이 짝수로 합산됩니다.
+A:
 ```
 
-*Output:*
+*출력:*
 ```
-First, you started with 10 apples.
-You gave away 2 apples to the neighbor and 2 to the repairman, so you had 6 apples left.
-Then you bought 5 more apples, so now you had 11 apples.
-Finally, you ate 1 apple, so you would remain with 10 apples.
+홀수(15, 5, 13, 7, 1)를 모두 더하면 41이 됩니다. 답은 False입니다.
 ```
 
-It's impressive that this simple prompt is effective at this task. This is particularly useful where you don't have too many examples to use in the prompt.
+와우! 추론 단계를 제공했을 때 완벽한 결과를 볼 수 있습니다. 더 적은 수의 예제, 즉 하나의 예제만 제공해도 충분히 이 과제를 해결할 수 있습니다:
+
+*프롬프트
+```
+이 그룹의 홀수는 4, 8, 9, 15, 12, 2, 1과 같이 짝수로 합산됩니다.
+A: 홀수(9, 15, 1)를 모두 더하면 25가 됩니다. 정답은 거짓입니다.
+이 그룹의 홀수는 15, 32, 5, 13, 82, 7, 1과 같이 짝수로 합산됩니다.
+A:
+```
+
+*출력:*
+```
+홀수(15, 5, 13, 7, 1)를 모두 더하면 41이 됩니다. 답은 False입니다.
+```
+
+저자들은 이것이 충분히 큰 언어 모델에서 발생하는 새로운 능력이라고 주장한다는 점을 명심하세요.
 
 ---
 
-## Self-Consistency
+## 제로샷 CoT
 
-Perhaps one of the more advanced techniques out there for prompt engineering is self-consistency. Proposed by [Wang et al. (2022)](https://arxiv.org/pdf/2203.11171.pdf), self-consistency aims "to replace the naive greedy decoding used in chain-of-thought prompting". The idea is to sample multiple, diverse reasoning paths through few-shot CoT, and use the generations to select the most consistent answer. This helps to boost the performance of CoT prompting on tasks involving arithmetic and commonsense reasoning.
+최근에 나온 아이디어 중 하나는 [제로샷 CoT](https://arxiv.org/abs/2205.11916)(코지마 외, 2022)로, 원래의 프롬프트에 "단계적으로 생각하자"를 추가하는 것을 기본으로 합니다. 간단한 문제를 풀고 모델이 어떻게 작동하는지 살펴봅시다:
 
-Let's try the following example for arithmetic reasoning:
-
-*Prompt:*
+*프롬프트:*
 ```
-When I was 6 my sister was half my age. Now
-I’m 70 how old is my sister?
+저는 시장에 가서 사과 10개를 샀습니다. 사과 2개를 이웃에게 주고 2개를 수리공에게 주었습니다. 그 후 저는 사과 5개를 더 사서 1개를 먹었습니다. 저는 몇 개의 사과를 가지고 있었나요?
 ```
 
-*Output:*
+*출력:*
+```
+사과 11개
+```
+
+답이 틀렸습니다! 이제 특수 프롬프트로 시도해 봅시다.
+
+*프롬프트:*
+```
+저는 시장에 가서 사과 10개를 샀습니다. 저는 사과 2개를 이웃에게 주고 2개를 수리공에게 주었습니다. 그 후 저는 사과 5개를 더 사서 1개를 먹었습니다. 사과가 몇 개나 남았나요?
+차근차근 생각해 봅시다.
+```
+
+*출력:*
+```
+먼저 사과 10개로 시작했다.
+이웃에게 사과 2개와 수리공에게 사과 2개를 나누어 주었으므로 사과가 6개 남았습니다.
+그런 다음 사과 5개를 더 사서 이제 사과가 11개가 되었습니다.
+마지막으로 사과 1개를 먹었으므로 사과 10개가 남게 됩니다.
+```
+
+이 간단한 프롬프트가 이 작업에 효과적이라는 점이 인상적입니다. 프롬프트에 사용할 예제가 너무 많지 않을 때 특히 유용합니다.
+
+---
+
+## 자체 일관성
+
+프롬프트 엔지니어링을 위한 더 진보된 기술 중 하나는 아마도 자기 일관성일 것입니다. 왕 외(2022)](https://arxiv.org/pdf/2203.11171.pdf)가 제안한 자기 일관성은 "생각의 사슬 프롬프트에 사용되는 순진한 욕심 디코딩을 대체하는 것"을 목표로 합니다. 이 아이디어는 몇 번의 CoT를 통해 여러 가지 다양한 추론 경로를 샘플링하고, 여러 세대를 거쳐 가장 일관된 답을 선택하는 것입니다. 이는 산술 및 상식적인 추론이 필요한 작업에서 CoT 프롬프트의 성능을 향상시키는 데 도움이 됩니다.
+
+산술 추론에 대한 다음 예시를 살펴보겠습니다:
+
+*프롬프트:*
+```
+제가 6살이었을 때 제 동생은 제 나이의 절반이었습니다. 지금
+저는 70살이고 제 여동생은 몇 살인가요?
+```
+
+*출력:*
 ```
 35
 ```
 
-The output is wrong! How may we improve this with self-consistency? Let's try it out. We will use the few-shot exemplars from Wang et al. 2022 (Table 17):
+출력이 잘못되었습니다! 자체 일관성을 통해 이 문제를 어떻게 개선할 수 있을까요? 한번 해봅시다. Wang 외, 2022(표 17)의 몇 가지 예시를 사용하겠습니다:
 
-*Prompt:*
+*프롬프트:*
 ```
-Q: There are 15 trees in the grove. Grove workers will plant trees in the grove today. After they are done,
-there will be 21 trees. How many trees did the grove workers plant today?
-A: We start with 15 trees. Later we have 21 trees. The difference must be the number of trees they planted.
-So, they must have planted 21 - 15 = 6 trees. The answer is 6.
-
-Q: If there are 3 cars in the parking lot and 2 more cars arrive, how many cars are in the parking lot?
-A: There are 3 cars in the parking lot already. 2 more arrive. Now there are 3 + 2 = 5 cars. The answer is 5.
-
-Q: Leah had 32 chocolates and her sister had 42. If they ate 35, how many pieces do they have left in total?
-A: Leah had 32 chocolates and Leah’s sister had 42. That means there were originally 32 + 42 = 74
-chocolates. 35 have been eaten. So in total they still have 74 - 35 = 39 chocolates. The answer is 39.
-
-Q: Jason had 20 lollipops. He gave Denny some lollipops. Now Jason has 12 lollipops. How many lollipops
-did Jason give to Denny?
-A: Jason had 20 lollipops. Since he only has 12 now, he must have given the rest to Denny. The number of
-lollipops he has given to Denny must have been 20 - 12 = 8 lollipops. The answer is 8.
-
-Q: Shawn has five toys. For Christmas, he got two toys each from his mom and dad. How many toys does
-he have now?
-A: He has 5 toys. He got 2 from mom, so after that he has 5 + 2 = 7 toys. Then he got 2 more from dad, so
-in total he has 7 + 2 = 9 toys. The answer is 9.
-
-Q: There were nine computers in the server room. Five more computers were installed each day, from
-monday to thursday. How many computers are now in the server room?
-A: There are 4 days from monday to thursday. 5 computers were added each day. That means in total 4 * 5 =
-20 computers were added. There were 9 computers in the beginning, so now there are 9 + 20 = 29 computers.
-The answer is 29.
-
-Q: Michael had 58 golf balls. On tuesday, he lost 23 golf balls. On wednesday, he lost 2 more. How many
-golf balls did he have at the end of wednesday?
-A: Michael initially had 58 balls. He lost 23 on Tuesday, so after that he has 58 - 23 = 35 balls. On
-Wednesday he lost 2 more so now he has 35 - 2 = 33 balls. The answer is 33.
-
-Q: Olivia has $23. She bought five bagels for $3 each. How much money does she have left?
-A: She bought 5 bagels for $3 each. This means she spent 5
-
-Q: When I was 6 my sister was half my age. Now I’m 70 how old is my sister?
+Q: 숲에는 15그루의 나무가 있습니다. 숲의 일꾼들은 오늘 숲에 나무를 심을 것입니다. 나무 심기가 끝나면,
+21그루의 나무가 있을 것입니다. 오늘 숲 일꾼들은 몇 그루의 나무를 심었나요?
+답: 15그루로 시작합니다. 나중에 나무가 21그루가 됩니다. 그 차이는 그들이 심은 나무의 수일 것입니다.
+따라서 그들은 21 - 15 = 6그루의 나무를 심었어야 합니다. 정답은 6입니다.
+질문: 주차장에 3대의 차량이 있고 2대의 차량이 더 도착하면 주차장에 몇 대의 차량이 있나요?
+A: 주차장에 이미 3대의 차량이 있습니다. 2대가 더 도착합니다. 이제 3 + 2 = 5대의 차량이 있습니다. 정답은 5입니다.
+질문: 레아는 초콜릿을 32개, 여동생은 42개를 먹었습니다. 둘이 35개를 먹었다면 총 몇 개가 남았나요?
+A: 레아는 초콜릿 32개를 먹었고 레아의 여동생은 42개를 먹었습니다. 즉, 원래 32개 + 42개 = 74개의
+초콜릿이 있었습니다. 35개를 먹었습니다. 따라서 총 74 - 35 = 39개의 초콜릿이 남아 있습니다. 정답은 39입니다.
+질문: 제이슨은 막대 사탕을 20개 먹었습니다. 그는 데니에게 막대 사탕을 주었습니다. 이제 제이슨은 막대사탕 12개를 가지고 있습니다. 제이슨은 데니에게
+몇 개의 막대 사탕을 데니에게 주었습니까?
+답: 제이슨은 막대 사탕 20개를 가지고 있었습니다. 이제 제이슨은 12개만 가지고 있으므로, 나머지는 데니에게 주었을 것입니다. 제이슨이 데니에게 준 막대사탕의
+20 - 12 = 8개의 막대 사탕을 데니에게 주었어야 합니다. 정답은 8개입니다.
+질문: 숀은 장난감이 다섯 개 있습니다. 크리스마스에 숀은 엄마와 아빠로부터 각각 두 개의 장난감을 받았습니다. 숀은 지금 몇 개의 장난감을
+숀은 지금 몇 개의 장난감을 가지고 있습니까?
+A: 숀은 장난감이 5개입니다. 엄마로부터 2개를 받았으므로 5 + 2 = 7개의 장난감을 가지고 있습니다. 그리고 아빠한테서 2개를 더 받았어요.
+총 7 + 2 = 9 개의 장난감을 가지고 있습니다. 정답은 9입니다.
+질문: 서버실에는 9대의 컴퓨터가 있었습니다. 월요일부터 목요일까지 매일 5대의 컴퓨터가 더 설치되었습니다.
+월요일부터 목요일까지. 현재 서버실에는 몇 대의 컴퓨터가 있나요?
+A: 월요일부터 목요일까지 4일간입니다. 매일 5대의 컴퓨터가 추가되었습니다. 즉, 총 4 * 5 =
+20대의 컴퓨터가 추가되었습니다. 처음에는 9대의 컴퓨터가 있었으므로 이제 9 + 20 = 29대의 컴퓨터가 있습니다.
+정답은 29입니다.
+질문: 마이클은 58개의 골프 공을 가지고 있었습니다. 화요일에 그는 23개의 골프 공을 잃어버렸습니다. 수요일에는 2개를 더 잃었습니다. 그가 수요일에 가지고 있던
+수요일이 끝났을 때 그가 가지고 있던 골프 공은 몇 개였습니까?
+A: 마이클은 처음에 58개의 공을 가지고 있었습니다. 화요일에 23개를 잃어버렸으므로 그 이후에는 58 - 23 = 35개의 공을 가지고 있습니다. On
+수요일에 2개를 더 잃어버렸으므로 이제 35 - 2 = 33개의 공을 가지고 있습니다. 정답은 33입니다.
+질문: 올리비아는 23달러를 가지고 있습니다. 그녀는 각각 3달러에 베이글 5개를 샀습니다. 올리비아에게 남은 돈은 얼마입니까?
+A: 그녀는 베이글 5개를 각각 3달러에 샀습니다. 이것은 그녀가 5달러를 썼다는 것을 의미합니다.
+Q: 제가 6살이었을 때 제 동생은 제 나이의 절반이었습니다. 지금 저는 70살인데 언니는 몇 살인가요?
 A:
 ```
 
-*Output 1:*
+*출력 1:*
 ```
-When I was 6 my sister was half my age, so she was 3. Now I am 70, so she is 70 - 3 = 67. The answer is 67.
-```
-
-*Output 2:*
-```
-When the narrator was 6, his sister was half his age, which is 3. Now that the narrator is 70, his sister would be 70 - 3 = 67 years old. The answer is 67.
+내가 6살이었을 때 동생은 내 나이의 절반이었으므로 3살이었습니다. 이제 나는 70살이므로 동생은 70 - 3 = 67입니다. 정답은 67입니다.
 ```
 
-*Output 3:*
+*출력 2:*
 ```
-When I was 6 my sister was half my age, so she was 3. Now I am 70, so she is 70/2 = 35. The answer is 35.
+화자가 6살이었을 때 그의 누나는 그의 절반 나이인 3살이었습니다. 이제 화자가 70살이 되었으므로 누나는 70 - 3 = 67살이 됩니다. 정답은 67입니다.
 ```
 
-Computing for the final answer involves a few steps (check out the paper for the details) but for the sake of simplicity, we can see that there is already a majority answer emerging so that would essentially become the final answer. 
+*출력 3:*
+```
+내가 6살이었을 때 누나는 내 나이의 절반이었으므로 3살이고, 이제 나는 70살이므로 누나는 70/2 = 35입니다. 정답은 35입니다.
+```
+
+최종 정답을 계산하려면 몇 가지 단계가 필요하지만(자세한 내용은 논문에서 확인), 간단하게 하기 위해 이미 다수의 정답이 나와 있으므로 이 정답이 최종 정답이 된다는 것을 알 수 있습니다.
 
 ---
-## Generated Knowledge Prompting
 
-LLMs continue to be improved and one popular technique includes the ability to incorporate knowledge or information to help the model make more accurate predictions. 
+생성된 지식 프롬프트 ##
 
-Using a similar idea, can the model also be used to generate knowledge before making a prediction? That's what is attempted in the paper by [Liu et al. 2022](https://arxiv.org/pdf/2110.08387.pdf) -- generate knowledge to be used as part of the prompt. In particular, how helpful is this for tasks such as commonsense reasoning?
+LLM은 계속해서 개선되고 있으며, 인기 있는 기법 중 하나는 모델이 더 정확한 예측을 할 수 있도록 지식이나 정보를 통합하는 기능입니다.
 
-Let's try a simple prompt:
+비슷한 아이디어를 사용하여 예측을 하기 전에 지식을 생성하는 데에도 모델을 사용할 수 있을까요? 이것이 바로 [Liu 외, 2022](https://arxiv.org/pdf/2110.08387.pdf)의 논문에서 시도한 것, 즉 프롬프트의 일부로 사용할 지식을 생성하는 것입니다. 특히 상식적인 추론과 같은 작업에 얼마나 도움이 될까요?
 
-*Prompt:*
+간단한 프롬프트를 사용해 보겠습니다:
+
+*프롬프트:*
 ```
-Part of golf is trying to get a higher point total than others. Yes or No?
+골프의 일부분은 다른 사람보다 더 높은 총점을 얻기 위해 노력하는 것입니다. 예, 아니오?
 ```
 
-*Output:*
+*출력:*
 ```
 Yes.
 ```
 
-This type of mistake reveals the limitations of LLMs to perform tasks that require more knowledge about the world. How do we improve this with knowledge generation?
+이러한 유형의 실수는 세상에 대한 더 많은 지식이 필요한 작업을 수행하는 데 있어 LLM의 한계를 드러냅니다. 지식 생성을 통해 이를 어떻게 개선할 수 있을까요?
 
-First, we generate a few "knowledges":
+먼저 몇 가지 '지식'을 생성합니다:
 
-*Prompt:*
+*프롬프트:*
 ```
-Input: Greece is larger than mexico.
-Knowledge: Greece is approximately 131,957 sq km, while Mexico is approximately 1,964,375 sq km, making Mexico 1,389% larger than Greece.
-
-Input: Glasses always fog up.
-Knowledge: Condensation occurs on eyeglass lenses when water vapor from your sweat, breath, and ambient humidity lands on a cold surface, cools, and then changes into tiny drops of liquid, forming a film that you see as fog. Your lenses will be relatively cool compared to your breath, especially when the outside air is cold.
-
-Input: A fish is capable of thinking.
-Knowledge: Fish are more intelligent than they appear. In many areas, such as memory, their cognitive powers match or exceed those of ’higher’ vertebrates including non-human primates. Fish’s long-term memories help them keep track of complex social relationships.
-
-Input: A common effect of smoking lots of cigarettes in one’s lifetime is a higher than normal chance of getting lung cancer.
-Knowledge: Those who consistently averaged less than one cigarette per day over their lifetime had nine times the risk of dying from lung cancer than never smokers. Among people who smoked between one and 10 cigarettes per day, the risk of dying from lung cancer was nearly 12 times higher than that of never smokers.
-
-Input: A rock is the same size as a pebble.
-Knowledge: A pebble is a clast of rock with a particle size of 4 to 64 millimetres based on the Udden-Wentworth scale of sedimentology. Pebbles are generally considered larger than granules (2 to 4 millimetres diameter) and smaller than cobbles (64 to 256 millimetres diameter).
-
-Input: Part of golf is trying to get a higher point total than others.
-Knowledge:
+입력합니다: 그리스는 멕시코보다 크다.
+지식: 그리스는 약 131,957 평방 킬로미터이고, 멕시코는 약 1,964,375 평방 킬로미터로 멕시코가 그리스보다 1,389% 더 큽니다.
+입력: 안경은 항상 김이 서립니다.
+지식: 안경 렌즈에는 땀, 호흡 및 주변 습도에서 나오는 수증기가 차가운 표면에 닿아 식은 다음 작은 액체 방울로 변하여 안개처럼 보이는 막을 형성할 때 응결이 발생합니다. 특히 외부 공기가 차가울 때는 호흡에 비해 렌즈가 상대적으로 차가워집니다.
+입력: 물고기는 생각할 수 있습니다.
+지식: 물고기는 보기보다 훨씬 더 똑똑합니다. 기억력과 같은 많은 영역에서 물고기의 인지 능력은 인간이 아닌 영장류를 포함한 '고등' 척추동물과 비슷하거나 그 이상입니다. 물고기의 장기 기억력은 복잡한 사회적 관계를 추적하는 데 도움이 됩니다.
+입력: 평생 담배를 많이 피우면 폐암에 걸릴 확률이 정상보다 높다는 것은 일반적인 결과입니다.
+지식: 평생 동안 하루 평균 담배를 한 개비 미만으로 꾸준히 피운 사람은 비흡연자보다 폐암으로 사망할 위험이 9배 높았습니다. 하루에 한 개비에서 열 개비 사이의 담배를 피운 사람들은 폐암으로 사망할 위험이 비흡연자보다 거의 12배 높았습니다.
+입력: 돌은 조약돌과 같은 크기입니다.
+지식: 조약돌은 퇴적학의 우든-웬트워스 척도에 따라 입자 크기가 4~64밀리미터인 암석 덩어리입니다. 자갈은 일반적으로 과립(직경 2~4밀리미터)보다는 크고 자갈(직경 64~256밀리미터)보다는 작은 것으로 간주됩니다.
+입력: 골프의 일부는 다른 사람보다 더 높은 총점을 얻기 위해 노력하는 것입니다.
+지식:
 ```
 
-*Knowledge 1:*
+*지식 1:*
 ```
-The objective of golf is to play a set of holes in the least number of strokes. A round of golf typically consists of 18 holes. Each hole is played once in the round on a standard golf course. Each stroke is counted as one point, and the total number of strokes is used to determine the winner of the game.
-```
-
-*Knowledge 2:*
-```
-Golf is a precision club-and-ball sport in which competing players (or golfers) use many types of clubs to hit balls into a series of holes on a course using the fewest number of strokes. The goal is to complete the course with the lowest score, which is calculated by adding up the total number of strokes taken on each hole. The player with the lowest score wins the game.
+골프의 목적은 최소한의 스트로크로 일련의 홀을 플레이하는 것입니다. 골프 라운드는 일반적으로 18홀로 구성됩니다. 각 홀은 표준 골프 코스에서 라운드 중 한 번씩 플레이됩니다. 각 스트로크는 1점으로 계산되며 총 스트로크 수를 사용하여 게임의 승자를 결정합니다.
 ```
 
-We are using the prompt provided in the paper by [Liu et al. 2022](https://arxiv.org/pdf/2110.08387.pdf).
-
-The next step is to integrate the knowledge and get a prediction. I reformatted the question into QA format to guide the answer format.
-
-*Prompt:*
+*지식 2:*
 ```
-Question: Part of golf is trying to get a higher point total than others. Yes or No?
-
-Knowledge: The objective of golf is to play a set of holes in the least number of strokes. A round of golf typically consists of 18 holes. Each hole is played once in the round on a standard golf course. Each stroke is counted as one point, and the total number of strokes is used to determine the winner of the game.
-
-Explain and Answer: 
+골프는 경쟁하는 선수(또는 골퍼)가 여러 종류의 클럽을 사용하여 가장 적은 수의 스트로크로 코스에 있는 일련의 홀에 공을 치는 정밀한 클럽 앤 볼 스포츠입니다. 목표는 각 홀에서 기록한 총 타수를 합산하여 계산되는 최저 스코어로 코스를 완주하는 것입니다. 가장 낮은 점수를 기록한 플레이어가 게임에서 승리합니다.
 ```
 
-*Answer 1 (confidence very high):*
+저희는 [Liu 외, 2022](https://arxiv.org/pdf/2110.08387.pdf)의 논문에서 제공한 프롬프트를 사용하고 있습니다.
+
+다음 단계는 지식을 통합하여 예측을 얻는 것입니다. 답변 형식을 안내하기 위해 질문을 QA 형식으로 재구성했습니다.
+
+*프롬프트:*
 ```
-No, the objective of golf is not to get a higher point total than others. Rather, the objective is to play a set of holes in the least number of strokes. The total number of strokes is used to determine the winner of the game, not the total number of points.
+질문: 골프의 일부는 다른 사람보다 더 높은 총점을 얻으려고 노력합니다. 예, 아니오?
+지식: 골프의 목표는 최소한의 스트로크로 일련의 홀을 플레이하는 것입니다. 골프 라운드는 일반적으로 18홀로 구성됩니다. 각 홀은 표준 골프 코스에서 라운드 중 한 번씩 플레이됩니다. 각 스트로크는 1점으로 계산되며 총 스트로크 수를 사용하여 게임의 승자를 결정합니다.
+설명하고 답하십시오:
+```
+
+*답변 1(신뢰도가 매우 높음):*
+```
+아니요, 골프의 목적은 다른 사람보다 더 높은 총점을 얻는 것이 아닙니다. 그보다는 최소한의 스트로크로 일련의 홀을 플레이하는 것이 목표입니다. 총 스트로크 수는 총 점수가 아니라 게임의 승자를 결정하는 데 사용됩니다.
 ```
 
 
 ```
-Question: Part of golf is trying to get a higher point total than others. Yes or No?
-
-Knowledge: Golf is a precision club-and-ball sport in which competing players (or golfers) use many types of clubs to hit balls into a series of holes on a course using the fewest number of strokes. The goal is to complete the course with the lowest score, which is calculated by adding up the total number of strokes taken on each hole. The player with the lowest score wins the game.
-
-Explain and Answer:
+질문: 골프의 일부분은 다른 사람보다 더 높은 총점을 얻으려고 노력하는 것입니다. 예, 아니오?
+지식: 골프는 경쟁하는 선수(또는 골퍼)가 여러 종류의 클럽을 사용하여 가장 적은 수의 스트로크로 코스의 일련의 홀에 공을 치는 정밀한 클럽 앤 볼 스포츠입니다. 목표는 각 홀에서 기록한 총 타수를 합산하여 계산되는 최저 스코어로 코스를 완주하는 것입니다. 가장 낮은 점수를 기록한 플레이어가 게임에서 승리합니다.
+설명하고 답하세요:
 ```
 
-*Answer 2 (confidence is a lot lower):*
+정답 2(자신감이 훨씬 낮습니다): *답변 2: *
 ```
-Yes, part of golf is trying to get a higher point total than others. Each player tries to complete the course with the lowest score, which is calculated by adding up the total number of strokes taken on each hole. The player with the lowest score wins the game.
+예, 골프의 일부는 다른 사람보다 더 높은 총점을 얻으려고 노력합니다. 각 플레이어는 각 홀에서 기록한 총 타수를 합산하여 계산되는 가장 낮은 점수로 코스를 완주하려고 합니다. 가장 낮은 점수를 얻은 플레이어가 게임에서 승리합니다.
 ```
 
-Some really interesting things happened with this example. In the first answer, the model was very confident but in the second not so much. I simplify the process for demonstration purposes but there are a few more details to consider when arriving at the final answer. Check out the paper for more.
+이 예제에서는 정말 흥미로운 일이 일어났습니다. 첫 번째 답변에서는 모델이 매우 자신감이 넘쳤지만 두 번째 답변에서는 그렇지 않았습니다. 데모를 위해 프로세스를 단순화했지만 최종 정답에 도달할 때 고려해야 할 몇 가지 세부 사항이 더 있습니다. 자세한 내용은 백서를 참조하세요.
 
 ---
 
-## Automatic Prompt Engineer (APE)
+자동 프롬프트 엔지니어(APE) ###
 
 ![](../img/APE.png)
 
-[Zhou et al., (2022)](https://arxiv.org/abs/2211.01910) propose automatic prompt engineer (APE) a framework for automatic instruction generation and selection. The instruction generation problem is framed as natural language synthesis addressed as a black-box optimization problem using LLMs to generate and search over candidate solutions. 
+[Zhou et al. (2022)](https://arxiv.org/abs/2211.01910)는 자동 명령어 생성 및 선택을 위한 프레임워크인 자동 프롬프트 엔지니어(APE)를 제안합니다. 명령어 생성 문제는 자연어 합성이 블랙박스 최적화 문제로 다루어지며, LLM을 사용하여 후보 솔루션을 생성하고 검색합니다.
 
-The first step involves a large language model (as an inference model) that is given output demonstrations to generate instruction candidates for a task. These candidate solutions will guide the search procedure. The instructions are executed using a target model, and then the most appropriate instruction is selected based on computed evaluation scores. 
+첫 번째 단계는 작업에 대한 명령어 후보를 생성하기 위해 출력 데모가 제공되는 대규모 언어 모델(추론 모델)을 포함합니다. 이러한 후보 솔루션이 검색 절차를 안내합니다. 목표 모델을 사용하여 명령어를 실행한 다음 계산된 평가 점수를 기반으로 가장 적합한 명령어를 선택합니다.
 
-APE discovers a better zero-shot CoT prompt than the human engineered "Let's think step by step" prompt (Kojima et al., 2022).
+APE는 인간이 설계한 "단계별로 생각해 봅시다"라는 프롬프트보다 더 나은 제로샷 CoT 프롬프트를 발견합니다(Kojima et al., 2022).
 
-The prompt "Let's work this out in a step by step way to be sure we have the right answer." elicits chain-of-though reasoning and improves performance on the MultiArith and GSM8K benchmarks:
+"정답이 맞는지 확인하기 위해 단계별로 해결해 봅시다."라는 프롬프트는 연쇄 추론을 유도하고 MultiArith 및 GSM8K 벤치마크에서 성능을 향상시킵니다:
 
 ![](../img/ape-zero-shot-cot.png)
 
-This paper touches on an important topic related to prompt engineering which is the idea of automatically optimizing prompts. While we don't go deep into this topic in this guide, here are a few key papers if you are interested in the topic:
+이 백서에서는 프롬프트 엔지니어링과 관련된 중요한 주제, 즉 프롬프트를 자동으로 최적화하는 아이디어를 다룹니다. 이 가이드에서는 이 주제에 대해 자세히 다루지는 않지만, 이 주제에 관심이 있으신 분들을 위해 몇 가지 주요 논문을 소개합니다:
 
-- [AutoPrompt](https://arxiv.org/abs/2010.15980) - proposes an approach to automatically create prompts for a diverse set of tasks based on gradient-guided search.
-- [Prefix Tuning](https://arxiv.org/abs/2101.00190) - a lightweight alternative to fine-tuning that prepends a trainable continuous prefix for NLG tasks. 
-- [Prompt Tuning](https://arxiv.org/abs/2104.08691) - proposes a mechanism for learning soft prompts through backpropagation.
+- 자동 프롬프트](https://arxiv.org/abs/2010.15980) - 그라데이션 가이드 검색을 기반으로 다양한 작업 세트에 대한 프롬프트를 자동으로 생성하는 접근 방식을 제안합니다.
+- Prefix Tuning](https://arxiv.org/abs/2101.00190) - NLG 작업에 대해 학습 가능한 연속 접두사를 앞에 붙이는 미세 조정에 대한 가벼운 대안입니다.
+- 프롬프트 튜닝](https://arxiv.org/abs/2104.08691) - 역전파를 통해 소프트 프롬프트를 학습하는 메커니즘을 제안합니다.
 
 ---
-[Previous Section (Basic Prompting)](./prompts-basic-usage.md)
+[이전 섹션(기본 프롬프트)](./prompts-basic-usage.md)
 
-[Next Section (Applications)](./prompts-applications.md)
+[다음 섹션(애플리케이션)](./prompts-applications.md)
