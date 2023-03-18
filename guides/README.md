@@ -1,11 +1,11 @@
-## Guides 🔮
-The following are a set of guides on prompt engineering developed by us (DAIR.AI). Guides are work in progress.  
+## 가이드 🔮
+다음은 당사(DAIR.AI)에서 개발한 프롬프트 엔지니어링에 대한 일련의 가이드입니다. 가이드는 현재 진행 중인 작업입니다.
 
-- [Prompt Engineering - Introduction](/guides/prompts-intro.md)
-- [Prompt Engineering - Basic Prompting](/guides/prompts-basic-usage.md)
-- [Prompt Engineering - Advanced Prompting](/guides/prompts-advanced-usage.md)
-- [Prompt Engineering - Applications](/guides/prompts-applications.md)
-- [Prompt Engineering - ChatGPT](/guides/prompts-chatgpt.md)
-- [Prompt Engineering - Adversarial Prompting](/guides/prompts-adversarial.md)
-- [Prompt Engineering - Reliability](/guides/prompts-reliability.md)
-- [Prompt Engineering - Miscellaneous Topics](/guides/prompts-miscellaneous.md)
+- 프롬프트 엔지니어링 - 소개
+- 프롬프트 엔지니어링 - 기본 프롬프트
+- 프롬프트 엔지니어링 - 고급 프롬프트
+- 프롬프트 엔지니어링 - 애플리케이션
+- 프롬프트 엔지니어링 - ChatGPT
+- 프롬프트 엔지니어링 - 적대적 프롬프트
+- 프롬프트 엔지니어링 - 신뢰성
+- 프롬프트 엔지니어링 - 기타 주제
