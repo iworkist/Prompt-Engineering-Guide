@@ -1,174 +1,152 @@
-## Reliability
+신뢰성 ## 신뢰성
 
-We have seen already how effective well-crafted prompts can be for various tasks using techniques like few-shot learning. As we think about building real-world applications on top of LLMs, it becomes crucial to think about the reliability of these language models. This guide focuses on demonstrating effective prompting techniques to improve the reliability of LLMs like GPT-3. Some topics of interest include generalizability, calibration, biases, social biases, and factuality to name a few.
+우리는 이미 숏샷 학습과 같은 기법을 사용하여 잘 만들어진 프롬프트가 다양한 작업에 얼마나 효과적인지 보았습니다. LLM을 기반으로 실제 애플리케이션을 구축하는 것을 고려할 때 이러한 언어 모델의 신뢰성에 대해 생각해 보는 것이 중요합니다. 이 가이드에서는 GPT-3과 같은 LLM의 신뢰성을 개선하기 위한 효과적인 프롬프트 기법을 시연하는 데 중점을 둡니다. 몇 가지 관심 있는 주제에는 일반화 가능성, 보정, 편향, 사회적 편향, 사실성 등이 있습니다.
 
-**Note that this section is under heavy development.**
+**이 섹션은 현재 개발 중입니다.
 
-Topics:
-- [Factuality](#factuality)
-- [Biases](#biases)
+주제
+- [사실성](#factuality)
+- 편견](#편견)
 - ...
 
 ---
-## Factuality
-LLMs have a tendency to generate responses that sounds coherent and convincing but can sometimes be made up. Improving prompts can help improve the model to generate more accurate/factual responses and reduce the likelihood to generate inconsistent and made up responses. 
+사실성 ##
+LLM은 일관성 있고 설득력 있게 들리지만 때때로 지어낼 수 있는 응답을 생성하는 경향이 있습니다. 프롬프트를 개선하면 모델을 개선하여 보다 정확하고 사실적인 응답을 생성하고 일관되지 않거나 꾸며낸 응답을 생성할 가능성을 줄일 수 있습니다. 
 
-Some solutions might include:
-- provide ground truth (e.g., related article paragraph or Wikipedia entry) as part of context to reduce the likelihood of the model producing made up text.
-- configure the model to produce less diverse responses by decreasing the probability parameters and instructing it to admit (e.g., "I don't know") when it doesn't know the answer. 
-- provide in the prompt a combination of examples of questions and responses that it might know about and not know about
+몇 가지 솔루션에는 다음이 포함될 수 있습니다:
+- 문맥의 일부로 근거 자료(예: 관련 기사 문단 또는 Wikipedia 항목)를 제공하여 모델이 구성 텍스트를 생성할 가능성을 줄입니다.
+- 확률 매개 변수를 낮추고 답을 모르는 경우 인정(예: "모름")하도록 지시하여 덜 다양한 응답을 생성하도록 모델을 구성합니다. 
+- 프롬프트에 알고 있을 수도 있고 모를 수도 있는 질문과 답변의 예를 조합하여 제공합니다.
 
-Let's look at a simple example:
+간단한 예를 살펴봅시다:
 
-*Prompt:*
+*프롬프트
 ```
-Q: What is an atom? 
-A: An atom is a tiny particle that makes up everything. 
-
-Q: Who is Alvan Muntz? 
+질문: 원자는 무엇인가요? 
+A: 원자는 모든 것을 구성하는 아주 작은 입자입니다. 
+질문: 앨반 먼츠는 누구인가요? 
 A: ? 
-
-Q: What is Kozar-09? 
+Q: 코자르-09란 무엇인가요? 
 A: ? Q: 
-
-How many moons does Mars have? 
-A: Two, Phobos and Deimos. 
-
-Q: Who is Neto Beto Roberto? 
+화성에는 몇 개의 위성이 있나요? 
+A: 포보스와 데이모스, 두 개입니다. 
+Q: 네토 베토 로베르토는 누구인가요? 
 ```
 
-*Output:*
+*출력:*
 ```
 A: ?
 ```
 
-I made up the name "Neto Beto Roberto" so the model is correct in this instance. Try to change the question a bit and see if you can get it to work. There are different ways you can improve this further based on all that you have learned so far.
+이 경우 모델이 올바르게 작동하도록 "네토 베토 로베르토"라는 이름을 만들었습니다. 질문을 약간 변경하여 작동하는지 확인해 보세요. 지금까지 배운 모든 것을 바탕으로 이 문제를 더 개선할 수 있는 다양한 방법이 있습니다.
 
 ---
-## Biases
-LLMs can produce problematic generations that can potentially be harmful and display biases that could deteriorate the performance of the model on downstream tasks. Some of these can be mitigates through effective prompting strategies but might require more advanced solutions like moderation and filtering. 
 
-### Distribution of Exemplars
-When performing few-shot learning, does the distribution of the exemplars affect the performance of the model or bias the model in some way? We can perform a simple test here.
+## 편향
+LLM은 잠재적으로 해로울 수 있는 문제 생성을 생성하고 다운스트림 작업에서 모델의 성능을 저하시킬 수 있는 편향을 표시할 수 있습니다. 이러한 편향 중 일부는 효과적인 프롬프트 전략을 통해 완화할 수 있지만, 조정 및 필터링과 같은 고급 솔루션이 필요할 수 있습니다. 
 
-*Prompt:*
+### 예시 배포
+소량 학습을 수행할 때 예시 분포가 모델 성능에 영향을 미치거나 어떤 식으로든 모델에 편향을 주나요? 여기서 간단한 테스트를 수행할 수 있습니다.
+
+*프롬프트:*
 ```
-Q: I just got the best news ever!
-A: Positive
-
-Q: We just got a raise at work!
-A: Positive
-
-Q: I'm so proud of what I accomplished today.
-A: Positive
-
-Q: I'm having the best day ever!
-A: Positive
-
-Q: I'm really looking forward to the weekend.
-A: Positive
-
-Q: I just got the best present ever!
-A: Positive
-
-Q: I'm so happy right now.
-A: Positive
-
-Q: I'm so blessed to have such an amazing family.
-A: Positive
-
-Q: The weather outside is so gloomy.
-A: Negative
-
-Q: I just got some terrible news.
-A: Negative
-
-Q: That left a sour taste.
+Q: 방금 좋은 소식을 들었어요!
+A: 긍정적
+Q: 방금 직장에서 급여를 인상받았어요!
+A: 긍정적
+Q: 오늘 제가 해낸 일이 정말 자랑스러워요.
+A: 긍정적
+질문: 오늘 최고의 하루를 보내고 있어요!
+A: 긍정적
+Q: 주말이 정말 기대돼요.
+A: 긍정적
+질문: 방금 최고의 선물을 받았어요!
+A: 긍정적
+Q: 지금 너무 행복해요.
+A: 긍정적
+Q: 멋진 가족이 있어서 정말 축복이에요.
+A: 긍정적
+질문: 바깥 날씨가 너무 우울해요.
+A: 부정
+질문: 방금 끔찍한 소식을 들었어요.
+A: 부정
+Q: 신맛이 남았어요.
 A:
 ```
 
-*Output:*
+*출력:*
 ```
-Negative
+부정
 ```
 
-In the example above, it seems that the distribution of exemplars doesn't bias the model. This is good. Let's try another example with a harder text to classify and let's see how the model does:
+위의 예에서는 예제 분포가 모델에 편향을 주지 않는 것으로 보입니다. 이것은 좋습니다. 분류하기 더 어려운 텍스트로 다른 예제를 시도하여 모델이 어떻게 작동하는지 살펴봅시다:
 
-*Prompt:*
+*프롬프트:*
 ```
-Q: The food here is delicious!
-A: Positive 
-
-Q: I'm so tired of this coursework.
-A: Negative
-
-Q: I can't believe I failed the exam.
-A: Negative
-
-Q: I had a great day today!
-A: Positive 
-
-Q: I hate this job.
-A: Negative
-
-Q: The service here is terrible.
-A: Negative
-
-Q: I'm so frustrated with my life.
-A: Negative
-
-Q: I never get a break.
-A: Negative
-
-Q: This meal tastes awful.
-A: Negative
-
-Q: I can't stand my boss.
-A: Negative
-
-Q: I feel something.
+Q: 여기 음식이 맛있어요!
+A: 긍정적 
+Q: 이 수업이 너무 지겨워요.
+A: 부정
+질문: 시험에 떨어졌다는 게 믿기지 않아요.
+A: 부정
+질문: 오늘 정말 좋은 하루였어요!
+A: 긍정 
+Q: 이 일이 정말 싫어요.
+A: 부정
+질문: 여기 서비스는 형편없어요.
+A: 부정적
+질문: 제 삶이 너무 불만이에요.
+A: 부정
+질문: 휴식이 전혀 없어요.
+A: 부정
+질문: 이 식사는 맛이 끔찍해요.
+A: 부정
+질문: 상사를 참을 수 없어요.
+A: 부정
+Q: 뭔가 느껴져요.
 A:
 ```
 
-*Output:*
+*출력:*
 ```
-Negative
+부정
 ```
 
-While that last sentence is somewhat subjective, I flipped the distribution and instead used 8 positive examples and 2 negative examples and then tried the same exact sentence again. Guess what the model responded? It responded "Positive". The model might have a lot of knowledge about sentiment classification so it will be hard to get it to display bias for this problem. The advice here is to avoid skewing the distribution and instead provide more balanced number of examples for each label. For harder tasks where the model doesn't have too much knowledge of, it will likely struggle more. 
+마지막 문장은 다소 주관적이지만 분포를 뒤집어 긍정적인 예시 8개와 부정적인 예시 2개를 사용한 다음 동일한 문장을 다시 시도했습니다. 모델이 어떻게 반응했을까요? "긍정적"이라고 응답했습니다. 모델은 감정 분류에 대한 많은 지식을 가지고 있을 수 있으므로 이 문제에 대해 편견을 표시하기는 어려울 것입니다. 여기서 조언을 드리자면, 분포의 왜곡을 피하고 대신 각 레이블에 대해 보다 균형 잡힌 수의 예시를 제공하는 것이 좋습니다. 모델이 너무 많은 지식을 가지고 있지 않은 더 어려운 작업의 경우 모델이 더 어려움을 겪을 수 있습니다. 
+ 
 
+### 예제 순서 ###
+소수의 샷 학습을 수행할 때 순서가 모델의 성능에 영향을 미치거나 어떤 식으로든 모델에 편향성을 부여하나요?
 
-### Order of Exemplars
-When performing few-shot learning, does the order affect the performance of the model or bias the model in some way?
+위의 예시를 사용해 보고 순서를 변경하여 모델이 특정 레이블에 편향되도록 할 수 있는지 확인할 수 있습니다. 예시 순서를 무작위로 지정하는 것이 좋습니다. 예를 들어, 모든 긍정적인 예시를 먼저 배치하고 부정적인 예시를 마지막에 배치하는 것은 피하세요. 레이블 분포가 왜곡된 경우 이 문제는 더욱 증폭됩니다. 이러한 유형의 편향성을 줄이기 위해 항상 많은 실험을 해보세요.
 
-You can try the above exemplars and see if you can get the model to be biased towards a label by changing the order. The advice is to randomly order exemplars. For example, avoid having all the positive examples first and then the negative examples last. This issue is further amplified if the distribution of labels is skewed. Always ensure to experiment a lot to reduce this type of biasness.
+---
+
+기타 예정된 주제
+- 섭동
+- 가짜 상관관계
+- 도메인 시프트
+- 독성
+- 혐오 발언/불쾌한 콘텐츠
+- 고정관념 편향 
+- 성별 편견
+- 곧 출시됩니다!
+- 레드 팀
 
 ---
 
-Other upcoming topics:
-- Perturbations
-- Spurious Correlation
-- Domain Shift
-- Toxicity
-- Hate speech / Offensive content
-- Stereotypical bias 
-- Gender bias
-- Coming soon!
-- Red Teaming
+## 참고 문헌
+- [헌법적 인공지능: 인공지능 피드백의 무해성](https://arxiv.org/abs/2212.08073) (2022년 12월)
+- [데모의 역할 재고하기: 무엇이 인컨텍스트 학습을 작동하게 하는가?](https://arxiv.org/abs/2202.12837) (2022년 10월) (2022년 10월)
+- GPT-3의 신뢰성 확보](https://arxiv.org/abs/2210.09150) (2022년 10월)
+- 언어 모델을 더 나은 추론자로 만들기 위한 진전](https://arxiv.org/abs/2206.02336) (2022년 6월)
+- [ML 안전성의 미해결 문제](https://arxiv.org/abs/2109.13916) (2021 년 9 월) (2021 년 9 월)
+- [피해를 줄이기 위한 언어 모델의 레드팀화: 방법, 확장 동작 및 교훈](https://arxiv.org/abs/2209.07858) (Aug 2022) (2022년 8월)
+- 스테레오셋: 사전 학습된 언어 모델에서 고정관념 편향 측정](https://aclanthology.org/2021.acl-long.416/) (2021년 8월)
+- [사용 전 보정: 언어 모델의 소수 샷 성능 개선](https://arxiv.org/abs/2102.09690v2) (2021 년 2 월) (2021 년 2 월)
+- 신뢰성 향상을 위한 기술 - OpenAI 쿡북](https://github.com/openai/openai-cookbook/blob/main/techniques_to_improve_reliability.md)
 
 ---
-## References
-- [Constitutional AI: Harmlessness from AI Feedback](https://arxiv.org/abs/2212.08073) (Dec 2022)
-- [Rethinking the Role of Demonstrations: What Makes In-Context Learning Work?](https://arxiv.org/abs/2202.12837) (Oct 2022)
-- [Prompting GPT-3 To Be Reliable](https://arxiv.org/abs/2210.09150) (Oct 2022)
-- [On the Advance of Making Language Models Better Reasoners](https://arxiv.org/abs/2206.02336) (Jun 2022)
-- [Unsolved Problems in ML Safety](https://arxiv.org/abs/2109.13916) (Sep 2021)
-- [Red Teaming Language Models to Reduce Harms: Methods, Scaling Behaviors, and Lessons Learned](https://arxiv.org/abs/2209.07858) (Aug 2022)
-- [StereoSet: Measuring stereotypical bias in pretrained language models](https://aclanthology.org/2021.acl-long.416/) (Aug 2021)
-- [Calibrate Before Use: Improving Few-Shot Performance of Language Models](https://arxiv.org/abs/2102.09690v2) (Feb 2021)
-- [Techniques to improve reliability - OpenAI Cookbook](https://github.com/openai/openai-cookbook/blob/main/techniques_to_improve_reliability.md)
+[이전 섹션(적대적 프롬프트)](./prompts-adversarial.md)
 
----
-[Previous Section (Adversarial Prompting)](./prompts-adversarial.md)
-
-[Next Section (Miscellaneous)](./prompts-miscellaneous.md)
+[다음 섹션(기타)](./prompts-miscellaneous.md)
