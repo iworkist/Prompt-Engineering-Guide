@@ -1,10 +1,10 @@
-# Prompting Introduction
+# 프롬프트 소개
 
-Prompt engineering is a relatively new discipline for developing and optimizing prompts to efficiently use language models (LMs) for a wide variety of applications and research topics. Prompt engineering skills help to better understand the capabilities and limitations of large language models (LLMs). Researchers use prompt engineering to improve the capacity of LLMs on a wide range of common and complex tasks such as question answering and arithmetic reasoning. Developers use prompt engineering to design robust and effective prompting techniques that interface with LLMs and other tools.
+프롬프트 엔지니어링은 다양한 애플리케이션과 연구 주제에 언어 모델(LM)을 효율적으로 사용할 수 있도록 프롬프트를 개발하고 최적화하는 비교적 새로운 분야입니다. 프롬프트 엔지니어링 기술은 대규모 언어 모델(LLM)의 기능과 한계를 더 잘 이해하는 데 도움이 됩니다. 연구자들은 프롬프트 엔지니어링을 사용하여 질문 답변 및 산술 추론과 같은 일반적이고 복잡한 다양한 작업에서 LLM의 역량을 향상시킵니다. 개발자는 프롬프트 엔지니어링을 사용하여 LLM 및 기타 도구와 인터페이스하는 강력하고 효과적인 프롬프트 기술을 설계합니다.
 
-This guide covers the basics of standard prompts to provide a rough idea on how to use prompts to interact and instruct large language models (LLMs). 
+이 가이드에서는 표준 프롬프트의 기본 사항을 다루며 프롬프트를 사용하여 대규모 언어 모델(LLM)과 상호 작용하고 지시하는 방법에 대한 대략적인 아이디어를 제공합니다.
 
-All examples are tested with `text-davinci-003` (using OpenAI's playground) unless otherwise specified. It uses the default configurations, e.g., `temperature=0.7` and `top-p=1`.
+모든 예제는 달리 명시되지 않는 한 `텍스트-davinci-003`(OpenAI의 플레이그라운드 사용)으로 테스트되었습니다. 기본 구성(예: `temperature=0.7` 및 `top-p=1`)을 사용합니다.
 
 Topic:
 - [Basic Prompts](#basic-prompts)
@@ -15,11 +15,11 @@ Topic:
 
 ---
 
-## Basic Prompts
+## 기본 프롬프트
 
-You can already achieve a lot with prompts, but the quality of results depends on how much information you provide it. A prompt can contain information like the `instruction` or `question` you are passing to the model and including other details such as `inputs` or `examples`. 
+프롬프트를 통해 이미 많은 것을 얻을 수 있지만 결과의 품질은 얼마나 많은 정보를 제공하느냐에 따라 달라집니다. 프롬프트에는 모델에 전달할 지시 사항이나 질문과 같은 정보를 포함할 수 있으며 입력 또는 예제와 같은 기타 세부 정보도 포함할 수 있습니다.
 
-Here is a basic example of a simple prompt:
+다음은 간단한 프롬프트의 기본 예입니다:
 
 *Prompt*
 ```
@@ -33,11 +33,11 @@ blue
 The sky is blue on a clear day. On a cloudy day, the sky may be gray or white.
 ```
 
-As you can see, the language model outputs a continuation of strings that make sense give the context `"The sky is"`. The output might be unexpected or far from the task we want to accomplish. 
+보시다시피 언어 모델은 "하늘은(The sky is)"이라는 문맥에 맞는 문자열의 연속을 출력합니다. 출력은 예상치 못한 것이거나 수행하려는 작업과 거리가 멀 수도 있습니다.
 
-This basic example also highlights the necessity to provide more context or instructions on what specifically we want to achieve.
+이 기본 예는 구체적으로 무엇을 달성하고자 하는지에 대한 더 많은 컨텍스트나 지침을 제공해야 할 필요성을 강조합니다.
 
-Let's try to improve it a bit:
+조금 더 개선해 봅시다:
 
 *Prompt:*
 ```
@@ -52,40 +52,41 @@ The sky is
  so  beautiful today.
 ```
 
-Is that better? Well, we told the model to complete the sentence so the result looks a lot better as it follows exactly what we told it to do ("complete the sentence"). This approach of designing optimal prompts to instruct the model to perform a task is what's referred to as **prompt engineering**. 
+이제 좀 나아졌나요? 모델에 문장을 완성하라고 지시했더니 모델에 지시한 대로("문장을 완성하라:", "Complete the sentence:") 결과가 훨씬 더 좋아 보입니다. 모델에 작업을 수행하도록 지시하는 최적의 프롬프트를 설계하는 이러한 접근 방식을 프롬프트 엔지니어링이라고 합니다.
 
-The example above is a basic illustration of what's possible with LLMs today. Today's LLMs are able to perform all kinds of advanced tasks that range from text summarization to mathematical reasoning to code generation.
-
----
-## A Word on LLM Settings
-
-When working with prompts, you will be interacting with the LLM via an API or directly. You can configure a few parameters to get different results for your prompts. 
-
-**Temperature** - In short, the lower the temperature the more deterministic the results in the sense that the highest probable next token is always picked. Increasing temperature could lead to more randomness encouraging more diverse or creative outputs. We are essentially increasing the weights of the other possible tokens. In terms of application, we might want to use lower temperature for something like fact-based QA to encourage more factual and concise responses. For poem generation or other creative tasks it might be beneficial to increase temperature. 
-
-**Top_p** - Similarly, with top_p, a sampling technique with temperature called nucleus sampling, you can control how deterministic the model is at generating a response. If you are looking for exact and factual answers keep this low. If you are looking for more diverse responses, increase to a higher value. 
-
-The general recommendation is to alter one not both.
-
-Before starting with some basic examples, keep in mind that your results may vary depending on the version of LLM you are using. 
+위의 예는 오늘날 LLM으로 가능한 것을 보여주는 기본적인 예시입니다. 오늘날의 LLM은 텍스트 요약부터 수학적 추론, 코드 생성에 이르기까지 모든 종류의 고급 작업을 수행할 수 있습니다.
 
 ---
-## Standard Prompts
+## LLM 설정에 대해 한마디
 
-We have tried a very simple prompt above. A standard prompt has the following format:
+프롬프트로 작업할 때는 API를 통해 또는 직접 LLM과 상호 작용하게 됩니다. 몇 가지 매개변수를 구성하여 프롬프트에 대해 다양한 결과를 얻을 수 있습니다.
+
+**온도** - 간단히 말해, 온도가 낮을수록 항상 가장 높은 확률의 다음 토큰이 선택된다는 의미에서 결과가 더 결정적입니다. 온도를 높이면 무작위성이 높아져 더 다양하고 창의적인 결과가 나올 수 있습니다. 기본적으로 다른 가능한 토큰의 가중치를 높이는 것입니다. 애플리케이션 측면에서, 사실에 기반한 QA와 같은 작업에는 온도를 낮게 설정하여 보다 사실적이고 간결한 응답을 유도할 수 있습니다. 시 창작이나 기타 창의적인 작업의 경우 온도를 높이는 것이 유리할 수 있습니다.
+
+**Top_p** - 마찬가지로 핵 샘플링이라고 하는 온도 샘플링 기법인 top_p를 사용하면 모델이 응답을 생성할 때 얼마나 결정론적인지 제어할 수 있습니다. 정확하고 사실적인 답변을 찾고 있다면 이 값을 낮게 유지하세요. 보다 다양한 응답을 원한다면 더 높은 값으로 높입니다.
+
+일반적으로 두 가지 모두 변경하지 말고 한 가지만 변경하는 것이 좋습니다.
+
+몇 가지 기본 예제를 시작하기 전에 사용 중인 LLM 버전에 따라 결과가 달라질 수 있다는 점을 염두에 두세요.
+
+---
+## 표준 프롬프트
+
+위에서 매우 간단한 프롬프트를 시도해 보았습니다. 표준 프롬프트의 형식은 다음과 같습니다:
 
 ```
 <Question>?
 ```
  
-This can be formatted into a QA format, which is standard in a lot of QA dataset, as follows:
+이 데이터는 다음과 같이 많은 QA 데이터 세트에서 표준으로 사용되는 QA 형식으로 포맷할 수 있습니다:
 
 ```
 Q: <Question>?
 A: 
 ```
 
-Given the standard format above, one popular and effective technique to prompting is referred to as few-shot prompting where we provide exemplars. Few-shot prompts can be formatted as follows:
+위의 표준 형식이 주어질때, 널리 사용되고 있는 효과적인 프롬프트 기법은 퓨샷(few-shot) 프롬프트라고 합니다. 퓨샷 프롬프트의 형식은 다음과 같습니다:
+
 
 ```
 <Question>?
@@ -101,8 +102,8 @@ Given the standard format above, one popular and effective technique to promptin
 
 ```
 
+QA 형식 버전은 다음과 같을 것이라는 것을 이미 짐작할 수 있습니다:
 
-And you can already guess that its QA format version would look like this:
 
 ```
 Q: <Question>?
@@ -118,7 +119,7 @@ Q: <Question>?
 A:
 ```
 
-Keep in mind that it's not required to use QA format. The format depends on the task at hand. For instance, you can perform a simple classification task and give exemplars that demonstrate the task as follows:
+반드시 QA 형식을 사용해야 하는 것은 아닙니다. 형식은 당면한 작업에 따라 다릅니다. 예를 들어 간단한 분류 작업을 수행하고 다음과 같이 작업을 보여주는 예시를 제공할 수 있습니다:
 
 *Prompt:*
 ```
@@ -133,7 +134,7 @@ What a horrible show! //
 Negative
 ```
 
-Few-shot prompts enable in-context learning which is the ability of language models to learn tasks given only a few examples. We will see more of this in action in the upcoming guides.
+몇 개의 예제만 주어져도 언어 모델이 작업을 학습할 수 있는 기능인 상황에 맞는 학습이 가능합니다. 향후 가이드에서 이 기능에 대해 더 자세히 살펴볼 예정입니다.
 
 ---
 ## Elements of a Prompt
