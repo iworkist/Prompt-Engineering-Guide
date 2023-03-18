@@ -1,148 +1,137 @@
-# Prompt Applications
+# 프롬프트 애플리케이션
 
-In this guide, we will cover some advanced and interesting ways we can use prompt engineering to perform useful and more advanced tasks. 
+이 가이드에서는 프롬프트 엔지니어링을 사용하여 유용하고 고급 작업을 수행할 수 있는 몇 가지 흥미로운 고급 방법을 다룹니다. 
 
-**Note that this section is under heavy development.**
-Topics:
-- [Generating Data](#generating-data)
-- [Program-Aided Language Models](#pal-program-aided-language-models)
-- [Python Notebooks](#python-notebooks)
+**이 섹션은 현재 개발 중입니다.
+주제
+- [데이터 생성](#generating-data)
+- [프로그램 지원 언어 모델](#pal-program-aided-language-models)
+- [파이썬 노트북](#python-notebooks)
 
 
 ---
-## Generating Data
-LLMs have strong capabilities to generate text. Using effective prompt strategies can steer the model to produce better, more consistent, and more factual responses. LLMs can also be especially useful for generating data which is useful to run all sorts of experiments. For example, we can use it to generate quick samples for a sentiment classifier like so:
+## 데이터 생성
+LLM은 텍스트를 생성하는 강력한 기능을 가지고 있습니다. 효과적인 프롬프트 전략을 사용하면 모델이 더 정확하고 일관되며 사실에 입각한 응답을 생성하도록 유도할 수 있습니다. 또한 LLM은 모든 종류의 실험을 실행하는 데 유용한 데이터를 생성하는 데 특히 유용할 수 있습니다. 예를 들어 다음과 같이 감정 분류기를 위한 빠른 샘플을 생성하는 데 사용할 수 있습니다:
 
-*Prompt:*
+*프롬프트:*
 ```
-Produce 10 exemplars for sentiment analysis. Examples are categorized as either positive or negative. Produce 2 negative examples and 8 positive examples. Use this format for the examples:
-Q: <sentence>
-A: <sentiment>
-```
-
-*Output:*
-```
-Q: I just got the best news ever!
-A: Positive
-
-Q: We just got a raise at work!
-A: Positive
-
-Q: I'm so proud of what I accomplished today.
-A: Positive
-
-Q: I'm having the best day ever!
-A: Positive
-
-Q: I'm really looking forward to the weekend.
-A: Positive
-
-Q: I just got the best present ever!
-A: Positive
-
-Q: I'm so happy right now.
-A: Positive
-
-Q: I'm so blessed to have such an amazing family.
-A: Positive
-
-Q: The weather outside is so gloomy.
-A: Negative
-
-Q: I just got some terrible news.
-A: Negative
+감성 분석용 예시 10개를 생성합니다. 예시는 긍정 또는 부정으로 분류됩니다. 부정적인 예시 2개와 긍정적인 예시 8개를 생성합니다. 예시에는 이 형식을 사용합니다:
+Q: <문장>
+A: <감성어>
 ```
 
-This is very useful. We use this example for a different test in another section of the guides.
+*출력:*
+```
+Q: 방금 최고의 소식을 받았어요!
+A: 긍정적
+Q: 방금 직장에서 급여를 인상받았어요!
+A: 긍정적
+Q: 오늘 제가 해낸 일이 정말 자랑스러워요.
+A: 긍정적
+질문: 오늘 최고의 하루를 보내고 있어요!
+A: 긍정적
+Q: 주말이 정말 기대돼요.
+A: 긍정적
+질문: 방금 최고의 선물을 받았어요!
+A: 긍정적
+Q: 지금 너무 행복해요.
+A: 긍정적
+Q: 멋진 가족이 있어서 정말 축복이에요.
+A: 긍정적
+질문: 바깥 날씨가 너무 우울해요.
+A: 부정
+질문: 방금 끔찍한 소식을 들었어요.
+A: 부정
+```
+
+이 예제는 매우 유용합니다. 가이드의 다른 섹션에서 다른 테스트에 이 예제를 사용합니다.
 
 ---
 
-## PAL (Program-Aided Language Models)
+## PAL(프로그램 지원 언어 모델)
  
-[Gao et al., (2022)](https://arxiv.org/abs/2211.10435) presents a method that uses LLMs to read natural language problems and generate programs as the intermediate reasoning steps. Coined, program-aided language models (PAL), differ from chain-of-thought prompting in that instead of using free-form text to obtain a solution it offloads the solution step to a programmatic runtime such as a Python interpreter.
+[Gao 외, (2022)](https://arxiv.org/abs/2211.10435)는 자연어 문제를 읽고 중간 추론 단계로 프로그램을 생성하기 위해 LLM을 사용하는 방법을 제시합니다. 프로그램 지원 언어 모델(PAL)은 자유 형식 텍스트를 사용하여 해답을 구하는 대신 Python 인터프리터와 같은 프로그래밍 런타임에 해답 단계를 오프로드한다는 점에서 연쇄 사고 프롬프트와 다릅니다.
 
 ![](../img/pal.png)
 
-Let's look at an example using LangChain and OpenAI GPT-3. We are interested to develop a simple application that's able to interpret the question being asked and provide an answer by leveraging the Python interpreter. 
+LangChain과 OpenAI GPT-3를 사용한 예제를 살펴보겠습니다. 우리는 파이썬 인터프리터를 활용하여 질문을 해석하고 답을 제공할 수 있는 간단한 애플리케이션을 개발하고자 합니다. 
 
-Specifically, we are interested to create a function that allows the use of the LLM to answer questions that require date understanding. We will provide the LLM a prompt that includes a few exemplars that are adopted from [here](https://github.com/reasoning-machines/pal/blob/main/pal/prompt/date_understanding_prompt.py).  
+특히, 날짜 이해가 필요한 질문에 대해 LLM을 사용하여 답변할 수 있는 기능을 만드는 데 관심이 있습니다. 여기](https://github.com/reasoning-machines/pal/blob/main/pal/prompt/date_understanding_prompt.py)에서 채택한 몇 가지 예제를 포함하는 프롬프트를 LLM에 제공할 것입니다.  
 
-These are the imports we need:
+다음은 필요한 임포트입니다:
 
 ```python
 import openai
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import os
-from langchain.llms import OpenAI
-from dotenv import load_dotenv
+langchain.llms에서 OpenAI를 가져옵니다.
+dotenv에서 load_dotenv를 가져옵니다.
 ```
 
-Let's first configure a few things:
+먼저 몇 가지를 구성해 보겠습니다:
 
-```python
+
+```파이썬
 load_dotenv()
-
-# API configuration
+# API 구성
 openai.api_key = os.getenv("OPENAI_API_KEY")
-
-# for LangChain
+# LangChain의 경우
 os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
 ```
 
-Setup model instance:
+모델 인스턴스를 설정합니다:
 
 ```python
 llm = OpenAI(model_name='text-davinci-003', temperature=0)
 ```
 
-Setup prompt + question:
+설정 프롬프트 + 질문:
 
 ```python
-question = "Today is 27 February 2023. I was born exactly 25 years ago. What is the date I was born in MM/DD/YYYY?"
-
-DATE_UNDERSTANDING_PROMPT = """
-# Q: 2015 is coming in 36 hours. What is the date one week from today in MM/DD/YYYY?
-# If 2015 is coming in 36 hours, then today is 36 hours before.
+question = "오늘은 2023년 2월 27일입니다. 저는 정확히 25년 전에 태어났습니다. 제가 태어난 날짜는 월/일/년/월/일/년으로 어떻게 되나요?"
+date_understanding_prompt = """
+# Q: 2015년이 36시간 후에 다가옵니다. 오늘로부터 1주일 후의 날짜는 월/일/년/월/일로 어떻게 되나요?
+# 2015년이 36시간 후에 다가온다면 오늘은 36시간 전입니다.
 today = datetime(2015, 1, 1) - relativedelta(hours=36)
-# One week from today,
+# 오늘로부터 일주일 후입니다,
 one_week_from_today = today + relativedelta(weeks=1)
-# The answer formatted with %m/%d/%Y is
+# m/%d/%Y로 형식이 지정된 답변은 다음과 같습니다.
 one_week_from_today.strftime('%m/%d/%Y')
-# Q: The first day of 2019 is a Tuesday, and today is the first Monday of 2019. What is the date today in MM/DD/YYYY?
-# If the first day of 2019 is a Tuesday, and today is the first Monday of 2019, then today is 6 days later.
+# Q: 2019년의 첫날은 화요일이고 오늘은 2019년의 첫 번째 월요일입니다. 오늘 날짜는 월/일/년/월/일(MM/DD/YYYY)로 어떻게 되나요?
+# 2019년 첫날이 화요일이고 오늘이 2019년의 첫 번째 월요일인 경우 오늘은 6일 후입니다.
 today = datetime(2019, 1, 1) + relativedelta(days=6)
-# The answer formatted with %m/%d/%Y is
+# m/%d/%Y로 형식이 지정된 답변은 다음과 같습니다.
 today.strftime('%m/%d/%Y')
-# Q: The concert was scheduled to be on 06/01/1943, but was delayed by one day to today. What is the date 10 days ago in MM/DD/YYYY?
-# If the concert was scheduled to be on 06/01/1943, but was delayed by one day to today, then today is one day later.
+# Q: 콘서트가 1943년 6월 1일에 열릴 예정이었으나 오늘로 하루 연기되었습니다. 10일 전의 날짜는 월/일/년/월/일/년으로 어떻게 되나요?
+# 콘서트가 1943년 6월 1일로 예정되었으나 오늘로 하루 연기된 경우 오늘은 하루 후입니다.
 today = datetime(1943, 6, 1) + relativedelta(days=1)
-# 10 days ago,
+# 10일 전입니다,
 ten_days_ago = today - relativedelta(days=10)
-# The answer formatted with %m/%d/%Y is
+# m/%d/%Y로 형식이 지정된 답변은 다음과 같습니다.
 ten_days_ago.strftime('%m/%d/%Y')
-# Q: It is 4/19/1969 today. What is the date 24 hours later in MM/DD/YYYY?
-# It is 4/19/1969 today.
+# Q: 오늘은 1969년 4월 19일입니다. 24시간 후의 날짜(MM/DD/YYYY)는 어떻게 되나요?
+# 오늘 4/19/1969입니다.
 today = datetime(1969, 4, 19)
-# 24 hours later,
-later = today + relativedelta(hours=24)
-# The answer formatted with %m/%d/%Y is
+# 24시간 후입니다,
+later = 오늘 + 상대 델타(시간=24)
+# m/%d/%Y로 형식이 지정된 답변은 다음과 같습니다.
 today.strftime('%m/%d/%Y')
-# Q: Jane thought today is 3/11/2002, but today is in fact Mar 12, which is 1 day later. What is the date 24 hours later in MM/DD/YYYY?
-# If Jane thought today is 3/11/2002, but today is in fact Mar 12, then today is 3/1/2002.
-today = datetime(2002, 3, 12)
-# 24 hours later,
-later = today + relativedelta(hours=24)
-# The answer formatted with %m/%d/%Y is
+# Q: Jane은 오늘이 2002년 3월 11일이라고 생각했지만 실제로는 하루 후인 3월 12일입니다. 24시간 후의 날짜는 MM/DD/YYYY로 어떻게 되나요?
+# 제인이 오늘이 2002년 3월 11일이라고 생각했지만 실제로는 3월 12일이라면 오늘은 2002년 3월 1일입니다.
+today = 날짜/시간(2002, 3, 12)
+# 24시간 후
+later = 오늘 + 상대 델타(시간=24)
+# m/%d/%Y로 형식이 지정된 답변은 다음과 같습니다.
 later.strftime('%m/%d/%Y')
-# Q: Jane was born on the last day of Feburary in 2001. Today is her 16-year-old birthday. What is the date yesterday in MM/DD/YYYY?
-# If Jane was born on the last day of Feburary in 2001 and today is her 16-year-old birthday, then today is 16 years later.
-today = datetime(2001, 2, 28) + relativedelta(years=16)
-# Yesterday,
-yesterday = today - relativedelta(days=1)
-# The answer formatted with %m/%d/%Y is
+# Q: Jane은 2001년 2월 마지막 날에 태어났습니다. 오늘은 그녀의 16세 생일입니다. 어제 날짜(월/일/월/일/년)는 어떻게 되나요?
+# Jane이 2001년 2월 마지막 날에 태어났고 오늘이 16세 생일인 경우 오늘은 16년 후입니다.
+today = 날짜/시간(2001, 2, 28) + 상대 델타(년=16)
+# 어제,
+어제 = 오늘 - 상대 델타(일수=1)
+# m/%d/%Y로 형식이 지정된 답변은 다음과 같습니다.
 yesterday.strftime('%m/%d/%Y')
-# Q: {question}
+# Q: {질문}
 """.strip() + '\n'
 ```
 
@@ -156,19 +145,19 @@ exec(llm_out)
 print(born)
 ```
 
-This will output the following: `02/27/1998`
+그러면 다음과 같이 출력됩니다: `02/27/1998`
 
----
-## Python Notebooks
 
-|Description|Notebook|
+## 파이썬 노트북
+
+|설명|노트북|
 |--|--|
-|Learn how to use the Python interpreter in combination with the language model to solve tasks.|[Program-Aided Language Models](../notebooks/pe-pal.ipynb)|
+|언어 모델과 함께 파이썬 인터프리터를 사용하여 작업을 해결하는 방법을 배웁니다.|[프로그램 지원 언어 모델](../notebooks/pe-pal.ipynb)|
 
 ---
 
-More examples coming soon!
+더 많은 예제가 곧 추가될 예정입니다!
 
-[Previous Section (Advanced Prompting)](./prompts-advanced-usage.md)
+[이전 섹션(고급 프롬프트)](./prompts-advanced-usage.md)
 
-[Next Section (ChatGPT)](./prompts-chatgpt.md)
+[다음 섹션(ChatGPT)](./prompts-chatgpt.md)
