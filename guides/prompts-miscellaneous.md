@@ -1,68 +1,71 @@
-# Miscellaneous Topics
+# 기타 주제
 
-In this section, we discuss other miscellaneous and uncategorized topics in prompt engineering. It includes relatively new ideas and approaches that will eventually be moved into the main guides as they become more widely adopted. This section of the guide is also useful to keep up with the latest research papers on prompt engineering.
+이 섹션에서는 프롬프트 엔지니어링의 기타 기타 및 분류되지 않은 주제에 대해 논의합니다. 여기에는 비교적 새로운 아이디어와 접근 방식이 포함되어 있으며, 이러한 아이디어와 접근 방식은 향후 더 널리 채택됨에 따라 기본 가이드로 이동될 것입니다. 이 가이드 섹션은 프롬프트 엔지니어링에 관한 최신 연구 논문을 파악하는 데에도 유용합니다.
 
-**Note that this section is under heavy development.**
+**이 섹션은 현재 개발 중입니다.
 
-Topic:
-- [Active Prompt](#active-prompt)
-- [Directional Stimulus Prompting](#directional-stimulus-prompting)
-- [ReAct](#react)
-- [Multimodal CoT Prompting](#multimodal-prompting)
-- [GraphPrompts](#graphprompts)
+주제:
+- [액티브 프롬프트](#active-prompt)
+- [방향성 자극 프롬프트](#방향성-자극-프롬프트)
+- [리액트](#리액트)
+- [멀티모달 CoT 프롬프트](#멀티모달-프롬프트)
+- [그래프 프롬프트](#그래프 프롬프트)
 - ...
 
 ---
 
-## Active-Prompt
+## 활성 프롬프트
 
-Chain-of-thought (CoT) methods rely on a fixed set of human-annotated exemplars. The problem with this is that the exemplars might not be the most effective examples for the different tasks. To address this, [Diao et al., (2023)](https://arxiv.org/pdf/2302.12246.pdf) recently proposed a new prompting approach called Active-Prompt to adapt LLMs to different task-specific example prompts (annotated with human-designed CoT reasoning).
+생각의 연쇄(CoT) 방식은 사람이 주석을 단 고정된 예시 집합에 의존합니다. 이 방법의 문제점은 예시가 다양한 작업에 가장 효과적인 예시가 아닐 수 있다는 것입니다. 이 문제를 해결하기 위해 [Diao 외, (2023)](https://arxiv.org/pdf/2302.12246.pdf)는 최근 액티브 프롬프트라는 새로운 프롬프트 접근 방식을 제안하여 LLM을 다양한 작업별 예시 프롬프트(인간이 설계한 CoT 추론으로 주석이 달림)에 적용하도록 했습니다.
 
-Below is an illustration of the approach. The first step is to query the LLM with or without a few CoT examples. *k* possible answers are generated for a set of training questions. An uncertainty metric is calculated based on the *k* answers (disagreement used). The most uncertain questions are selected for annotation by humans. The new annotated exemplars are then used to infer each question. 
+아래는 이 접근 방식에 대한 그림입니다. 첫 번째 단계는 몇 가지 CoT 예제를 포함하거나 포함하지 않고 LLM에 쿼리하는 것입니다. 일련의 훈련 질문에 대해 *k* 개의 가능한 답변이 생성됩니다. 불확실성 지표는 *k*개의 답변(사용된 불일치)을 기반으로 계산됩니다. 가장 불확실한 질문은 사람이 주석을 달도록 선택됩니다. 그런 다음 주석이 달린 새로운 예시를 사용하여 각 질문을 추론합니다. 
 
 ![](../img/active-prompt.png)
 
 ---
-## Directional Stimulus Prompting
-[Li et al., (2023)](https://arxiv.org/abs/2302.11520) proposes a new prompting technique to better guide the LLM in generating the desired summary.
+## 방향성 자극 프롬프트
+[Li et al. (2023)](https://arxiv.org/abs/2302.11520)는 원하는 요약을 생성하는 데 있어 LLM을 더 잘 안내하기 위한 새로운 프롬프트 기법을 제안합니다.
 
-A tuneable policy LM is trained to generate the stimulus/hint. Seeing more use of RL to optimize LLMs.
+조정 가능한 정책 LM은 자극/힌트를 생성하도록 훈련됩니다. LLM을 최적화하기 위해 RL을 더 많이 사용하고 있습니다.
 
-The figure below shows how Directional Stimulus Prompting compares with standard prompting. The policy LM can be small and optimized to generate the hints that guide a black-box frozen LLM.
+아래 그림은 방향성 자극 프롬프트가 표준 프롬프트와 어떻게 비교되는지 보여줍니다. 정책 LM은 블랙박스 프로즌 LLM을 안내하는 힌트를 생성하기 위해 작고 최적화될 수 있습니다.
 
 ![](../img/dsp.jpeg)
 
-Full example coming soon!
+전체 예제는 곧 제공될 예정입니다!
 
 ---
 ## ReAct
 
-[Yao et al., 2022](https://arxiv.org/abs/2210.03629) introduced a framework where LLMs are used to generate both reasoning traces and task-specific actions in an interleaved manner. Generating reasoning traces allow the model to induce, track, and update action plans, and even handle exceptions. The action step allows to interface with and gather information from external sources such as knowledge bases or environments.
+[야오 외, 2022](https://arxiv.org/abs/2210.03629)에서는 LLM을 사용하여 추론 추적과 작업별 액션을 인터리브 방식으로 생성하는 프레임워크를 소개했습니다. 추론 추적을 생성하면 모델이 실행 계획을 유도, 추적, 업데이트하고 예외를 처리할 수 있습니다. 실행 단계에서는 지식 기반이나 환경과 같은 외부 소스와 인터페이스하고 정보를 수집할 수 있습니다.
 
-The ReAct framework can allow LLMs to interact with external tools to retrieve additional information that leads to more reliable and factual responses.
+ReAct 프레임워크를 사용하면 LLM이 외부 도구와 상호 작용하여 보다 신뢰할 수 있고 사실적인 대응으로 이어지는 추가 정보를 검색할 수 있습니다.
 
 ![](../img/react.png)
 
-Full example coming soon!
+전체 예제는 곧 공개됩니다!
 
 ---
-## Multimodal CoT Prompting
+## 멀티모달 CoT 프롬프트
 
-[Zhang et al. (2023)](https://arxiv.org/abs/2302.00923) recently proposed a multimodal chain-of-thought prompting approach. Traditional CoT focuses on the language modality. In contrast, Multimodal CoT incorporates text and vision into a two-stage framework. The first step involves rationale generation based on multimodal information. This is followed by the second phase, answer inference, which leverages the informative generated rationales.
+[Zhang et al. (2023)](https://arxiv.org/abs/2302.00923)은 최근 멀티모달 사고 연쇄 프롬프트 접근 방식을 제안했습니다. 전통적인 CoT는 언어 양식에 중점을 둡니다. 반면, 멀티모달 CoT는 텍스트와 시각을 2단계 프레임워크에 통합합니다. 첫 번째 단계에서는 멀티모달 정보를 기반으로 근거를 생성합니다. 그 다음에는 두 번째 단계인 답변 추론이 이어지며, 이 단계에서는 생성된 정보를 활용하여 답변을 도출합니다.
 
-The multimodal CoT model (1B) outperforms GPT-3.5 on the ScienceQA benchmark.
+멀티모달 CoT 모델(1B)은 ScienceQA 벤치마크에서 GPT-3.5보다 성능이 뛰어납니다.
 
 ![](../img/multimodal-cot.png)
 
-Further reading:
-- [Language Is Not All You Need: Aligning Perception with Language Models](https://arxiv.org/abs/2302.14045) (Feb 2023)
+추가 읽기:
+- [언어가 전부는 아니다: 언어 모델과 인식의 일치](https://arxiv.org/abs/2302.14045) (2023년 2월)
 
 ---
-## GraphPrompts
+## 그래프 프롬프트
 
-[Liu et al., 2023](https://arxiv.org/abs/2302.08043) introduces GraphPrompt, a new prompting framework for graphs to improve performance on downstream tasks.
+[Liu 외, 2023](https://arxiv.org/abs/2302.08043)에서는 다운스트림 작업의 성능을 개선하기 위해 그래프를 위한 새로운 프롬프트 프레임워크인 GraphPrompt를 소개합니다.
 
-More coming soon!
+곧 추가될 예정입니다!
+
+---
+[이전 섹션(신뢰성)](./prompts-reliability.md)
 
 ---
 [Previous Section (Reliability)](./prompts-reliability.md)
