@@ -1,148 +1,140 @@
-# ChatGPT Prompt Engineering
+# ChatGPT 프롬프트 엔지니어링
 
-In this section, we cover the latest prompt engineering techniques for ChatGPT, including tips, applications, limitations, papers, and additional reading materials.
+이 섹션에서는 팁, 응용 프로그램, 제한 사항, 논문 및 추가 읽기 자료를 포함하여 ChatGPT의 최신 프롬프트 엔지니어링 기술에 대해 설명합니다.
 
-**Note that this section is under heavy development.**
+**이 섹션은 현재 개발 중입니다.
 
-Topics:
-- [ChatGPT Introduction](#chatgpt-introduction)
-- [Reviewing The Conversation Task](#reviewing-the-conversation-task)
-- [Conversations with ChatGPT](#conversations-with-chatgpt)
-- [Python Notebooks](#python-notebooks)
-
----
-## ChatGPT Introduction
-
-ChatGPT is a new model [trained by OpenAI](https://openai.com/blog/chatgpt) that can interact conversationally. This model is trained to follow instructions in a prompt to provide appropriate responses in the context of a dialogue. ChatGPT can help with answering questions, suggesting recipes, writing lyrics in a certain style, generating code, and much more.
-
-ChatGPT is trained using Reinforcement Learning from Human Feedback (RLHF). While this model is a lot more capable than previous GPT iterations (and also trained to reduce harmful and untruthful outputs), it still comes with limitations. Let's cover some of the capabilities and limitations with concrete examples. 
-
-You can use the research preview of ChatGPT [here](https://chat.openai.com) but for the examples below we will use the `Chat` mode on the OpenAI Playground.
+주제
+- ChatGPT 소개](#chatgpt-introduction)
+- 대화 과제 검토하기](#reviewing-the-conversation-task)
+- ChatGPT로 대화하기](#conversations-with-chatgpt)
+- 파이썬 노트북](#python-notebooks)
 
 ---
-## Reviewing The Conversation Task
+## ChatGPT 소개
 
-In one of the [previous guides](https://github.com/dair-ai/Prompt-Engineering-Guide/blob/main/guides/prompts-basic-usage.md#conversation), we covered a bit about conversation capabilities and role prompting. We covered how to instruct the LLM to have a conversation in a specific style, with a specific intent, behavior, and identity.
+ChatGPT는 대화형 인터랙션이 가능한 새로운 모델 [OpenAI로 학습](https://openai.com/blog/chatgpt)입니다. 이 모델은 대화의 맥락에서 적절한 응답을 제공하기 위해 프롬프트의 지침을 따르도록 학습되었습니다. ChatGPT는 질문에 답하고, 레시피를 제안하고, 특정 스타일로 가사를 작성하고, 코드를 생성하는 등의 작업에 도움을 줄 수 있습니다.
 
-Let's review our previous basic example where we created a conversational system that's able to generate more technical and scientific responses to questions. 
+ChatGPT는 인간 피드백을 통한 강화 학습(RLHF)을 사용하여 학습됩니다. 이 모델은 이전 GPT 반복보다 훨씬 더 성능이 뛰어나지만(또한 유해하고 진실하지 않은 출력을 줄이도록 훈련되었지만) 여전히 한계가 있습니다. 구체적인 예를 통해 몇 가지 기능과 한계를 살펴보겠습니다. 
 
-*Prompt:*
+여기](https://chat.openai.com)에서 ChatGPT의 리서치 프리뷰를 사용할 수 있지만, 아래 예제에서는 OpenAI Playground의 '채팅' 모드를 사용하겠습니다.
+
+---
+## 대화 과제 검토하기
+
+이전 가이드](https://github.com/dair-ai/Prompt-Engineering-Guide/blob/main/guides/prompts-basic-usage.md#conversation)에서 대화 기능과 역할 프롬프트에 대해 조금 다뤘습니다. 특정 의도, 행동 및 정체성을 가진 특정 스타일로 대화를 하도록 LLM에 지시하는 방법을 다루었습니다.
+
+질문에 대해 보다 기술적이고 과학적인 답변을 생성할 수 있는 대화 시스템을 만들었던 이전의 기본 예제를 다시 살펴보겠습니다. 
+
+*프롬프트:*
 ```
-The following is a conversation with an AI research assistant. The assistant tone is technical and scientific.
-
-Human: Hello, who are you?
-AI: Greeting! I am an AI research assistant. How can I help you today?
-Human: Can you tell me about the creation of black holes?
+다음은 AI 연구 어시스턴트와의 대화입니다. 어시스턴트의 어조는 기술적이고 과학적입니다.
+사람: 안녕하세요, 누구세요?
+AI: 안녕하세요! 저는 인공지능 연구 조수입니다. 오늘은 무엇을 도와드릴까요?
+인간: 블랙홀의 생성에 대해 알려주실 수 있나요?
 AI:
 ```
 
-From the example above, you can see two important components:
-- the **intent** or explanation of what the chatbot is
-- the **identity** which instructs the style or tone the chatbot will use to respond
+위의 예에서 두 가지 중요한 구성 요소를 볼 수 있습니다:
+- 챗봇이 무엇인지에 대한 **의도** 또는 설명
+- 챗봇이 응답할 때 사용할 스타일이나 어조를 지시하는 **아이덴티티**.
 
-The simple example above works well with the text completion APIs that use `text-davinci-003`. More recently, OpenAI [announced the ChatGPT APIs](https://openai.com/blog/introducing-chatgpt-and-whisper-apis), which is a more powerful and cheaper model called `gpt-3.5-turbo` was specifically built for this type of functionality (chat completions). OpenAI recommends this as their best model even for non-chat use cases.  Other benefits of using the ChatGPT APIs are significant cost reduction (90%) and efficiency. 
+위의 간단한 예는 `text-davinci-003`을 사용하는 텍스트 완성 API에서 잘 작동합니다. 최근에 OpenAI는 이러한 유형의 기능(채팅 완성)을 위해 특별히 구축된 `gpt-3.5-turbo`라는 더 강력하고 저렴한 모델인 ChatGPT API를 발표했습니다(https://openai.com/blog/introducing-chatgpt-and-whisper-apis). OpenAI는 채팅이 아닌 사용 사례에서도 이 모델을 최고의 모델로 추천합니다.  ChatGPT API 사용의 다른 이점은 상당한 비용 절감(90%)과 효율성입니다. 
 
-Big companies like Snap Inc. and Instacart are already integrating conversational features powered by ChatGPT on their products that range from personalized recommendations to open-ended shopping goals.
+Snap Inc. 및 Instacart와 같은 대기업은 이미 개인화된 추천부터 개방형 쇼핑 목표에 이르기까지 다양한 제품에 ChatGPT로 구동되는 대화 기능을 통합하고 있습니다.
 
----
-## Conversations with ChatGPT
+--- Translated with www.DeepL.com/Translator (free version)
 
-### Multi-turn Conversations
+ChatGPT와의 대화 ###
 
-To begin demonstrating the capabilities of ChatGPT, we will use the chatbot assistant example above and discuss the results. Compared to `text-davinci-003`, the `gpt-3.5-turbo` model that powers ChatGPT uses a chat format as input. The model expects a series of messages as input and uses those to generate a response. 
+멀티턴 대화 ###
 
-*Input:*
+먼저 위의 챗봇 어시스턴트 예시를 통해 ChatGPT의 기능을 시연하고 그 결과를 살펴보겠습니다. 'text-davinci-003'과 비교했을 때, ChatGPT를 구동하는 'gpt-3.5-turbo' 모델은 채팅 형식을 입력으로 사용합니다. 이 모델은 일련의 메시지를 입력으로 예상하고 이를 사용하여 응답을 생성합니다. 
+
+*입력:*
 ```
-SYSTEM: You are an AI research assistant. You use a tone that is technical and scientific.
-USER: Hello, who are you?
-ASSISTANT: Greeting! I am an AI research assistant. How can I help you today?
-USER: Can you tell me about the creation of black holes?
-```
-
-*Output:*
-```
-ASSISTANT: Of course! Black holes are created when a massive star runs out of fuel and collapses under its own gravity. This collapse causes the star to become incredibly dense, with a gravitational field so strong that not even light can escape it. This point of no return is known as the event horizon. Once a star crosses the event horizon, it is considered a black hole...
+시스템: 귀하는 AI 연구 조교입니다. 기술적이고 과학적인 어조를 사용합니다.
+USER: 안녕하세요, 누구세요?
+ASSISTANT: 안녕하세요! 저는 AI 연구 조교입니다. 오늘은 무엇을 도와드릴까요?
+사용자: 블랙홀의 생성에 대해 알려주실 수 있나요?
 ```
 
-Note that in the example above, I have simplified the input and output but the ChatGPT chat completion API requires messages to be in a specific format. I have added a snapshot below of how this example would look using the `Chat Mode` in the OpenAI Playground:
+*출력:*
+```
+보조자: 물론이죠! 블랙홀은 거대한 별이 연료가 다 떨어져서 자체 중력에 의해 붕괴할 때 만들어집니다. 이 붕괴는 별을 엄청나게 조밀하게 만들고, 빛조차도 빠져나갈 수 없을 정도로 강한 중력장을 만듭니다. 이 돌아올 수 없는 지점을 사건의 지평선이라고 합니다. 별이 사건의 지평선을 넘으면 블랙홀로 간주됩니다...
+```
+
+위의 예제에서는 입력과 출력을 단순화했지만 ChatGPT 채팅 완료 API는 메시지가 특정 형식이어야 한다는 점에 유의하세요. 이 예제가 OpenAI 플레이그라운드에서 '채팅 모드'를 사용하면 어떻게 보이는지 아래에 스냅샷을 추가했습니다:
 
 ![](../img/chatgpt-1.png)
 
-The more formal API call for our example would look something like the example below:
+이 예제에 대한 보다 공식적인 API 호출은 아래 예제와 비슷할 것입니다:
 
 ```python
 import openai
-
 openai.ChatCompletion.create(
   model="gpt-3.5-turbo",
   messages=[
-        {"role": "system", "content": "You are an AI research assistant. You use a tone that is technical and scientific."},
-        {"role": "user", "content": "Hello, who are you?"},
-        {"role": "assistant", "content": "Greeting! I am an AI research assistant. How can I help you today?"},
-        {"role": "user", "content": "Can you tell me about the creation of black holes?"}
+        {"role": "시스템", "콘텐츠": "귀하는 AI 연구 조교입니다. 기술적이고 과학적인 어조를 사용합니다."},
+        {"role": "사용자", "콘텐츠": "안녕하세요, 누구세요?"},
+        {"role": "어시스턴트", "콘텐츠": "안녕하세요! 저는 인공지능 연구 조교입니다. 오늘은 무엇을 도와드릴까요?"},
+        {"role": "사용자", "콘텐츠": "블랙홀의 생성에 대해 알려주실 수 있나요?"}
     ]
 )
 ```
-The way developers interact with ChatGPT in the future is expected to be done via the [Chat Markup Language](https://github.com/openai/openai-python/blob/main/chatml.md) (ChatML for short).
+향후 개발자가 ChatGPT와 상호작용하는 방식은 [채팅 마크업 언어](https://github.com/openai/openai-python/blob/main/chatml.md)(줄여서 ChatML)를 통해 이루어질 것으로 예상됩니다.
 
-### Single-turn tasks
+### 싱글 턴 작업
 
-The chat format enables multi-turn conversations but it also supports single-turn tasks similar to what we used with `text-davinci-003`. This means we can use ChatGPT to perform similar tasks as what we have demonstrated for the original GPT models. For example, let's try to perform the following question-answering task using ChatGPT:
+채팅 형식은 멀티턴 대화도 가능하지만 `text-davinci-003`에서 사용한 것과 유사한 싱글턴 작업도 지원합니다. 즉, 기존 GPT 모델에서 시연했던 것과 유사한 작업을 ChatGPT를 사용하여 수행할 수 있습니다. 예를 들어 ChatGPT를 사용하여 다음과 같은 질문-응답 작업을 수행해 보겠습니다:
 
-*Input:*
+*입력:*
 ```
-USER: Answer the question based on the context below. Keep the answer short and concise. Respond "Unsure about answer" if not sure about the answer.
-
-Context: Teplizumab traces its roots to a New Jersey drug company called Ortho Pharmaceutical. There, scientists generated an early version of the antibody, dubbed OKT3. Originally sourced from mice, the molecule was able to bind to the surface of T cells and limit their cell-killing potential. In 1986, it was approved to help prevent organ rejection after kidney transplants, making it the first therapeutic antibody allowed for human use.
-
-Question: What was OKT3 originally sourced from?
-
-Answer:
+USER: 아래 문맥에 따라 질문에 답하세요. 답변은 짧고 간결하게 작성하세요. 답변이 확실하지 않은 경우 "답변이 확실하지 않음"이라고 응답하세요.
+컨텍스트: 테플리주맙의 기원은 뉴저지의 Ortho Pharmaceutical이라는 제약회사에 있습니다. 그곳에서 과학자들은 OKT3라고 불리는 초기 버전의 항체를 생성했습니다. 원래 생쥐에서 추출한 이 분자는 T세포 표면에 결합하여 세포 살상 가능성을 제한할 수 있었습니다. 1986년에는 신장 이식 후 장기 거부 반응을 예방하는 데 도움이 되는 것으로 승인되어 인간에게 사용하도록 허용된 최초의 치료용 항체가 되었습니다.
+질문: OKT3는 원래 어디에서 유래했나요?
+답변:
 ```
 
-*Output:*
+*출력:*
 ```
-ASSISTANT: Mice.
+보조: 마우스.
 ```
 
-Keep in mind that I am adding the `USER` and `ASSISTANT` labels to better demonstrate how the task can be performed using ChatGPT. Here is the example using the Playground:
+ChatGPT를 사용하여 작업을 수행하는 방법을 더 잘 보여주기 위해 `사용자` 및 `보조자` 레이블을 추가하고 있다는 점에 유의하세요. 다음은 플레이그라운드를 사용한 예제입니다:
 
 ![](../img/chatgpt-classic.png)
 
-More formally, this is the API call (I've only included the message component of the request):
+좀 더 공식적으로, 이것은 API 호출입니다(요청의 메시지 구성 요소만 포함했습니다):
 
 ```python
-CONTENT = """Answer the question based on the context below. Keep the answer short and concise. Respond \"Unsure about answer\" if not sure about the answer.
-
-Context: Teplizumab traces its roots to a New Jersey drug company called Ortho Pharmaceutical. There, scientists generated an early version of the antibody, dubbed OKT3. Originally sourced from mice, the molecule was able to bind to the surface of T cells and limit their cell-killing potential. In 1986, it was approved to help prevent organ rejection after kidney transplants, making it the first therapeutic antibody allowed for human use.
-
-Question: What was OKT3 originally sourced from?
-
-Answer:
+CONTENT = """아래 문맥에 따라 질문에 답하세요. 답변은 짧고 간결하게 작성하세요. 답변이 확실하지 않은 경우 \"답변이 확실하지 않음\"으로 응답하세요.
+컨텍스트: 테플리주맙의 기원은 뉴저지의 Ortho Pharmaceutical이라는 제약회사에 있습니다. 그곳에서 과학자들은 OKT3라고 불리는 초기 버전의 항체를 생성했습니다. 원래 생쥐에서 추출한 이 분자는 T세포 표면에 결합하여 세포를 죽이는 잠재력을 제한할 수 있었습니다. 1986년에는 신장 이식 후 장기 거부 반응을 예방하는 데 도움이 되는 것으로 승인되어 인간에게 사용하도록 허용된 최초의 치료용 항체가 되었습니다.
+질문: OKT3는 원래 어디에서 유래했나요?
+답변:
 """
-
-response = openai.ChatCompletion.create(
+응답 = openai.ChatCompletion.create(
     model="gpt-3.5-turbo",
     messages=[
-        {"role": "user", "content": CONTENT},
+        {"role": "사용자", "콘텐츠": CONTENT},
     ],
     temperature=0,
 )
 ```
 
-### Instructing Chat Models
+### 채팅 모델에 명령하기
 
-According to the official OpenAI docs, snapshots of the `gpt-3.5-turbo` model will also be made available. For example, we can access the snapshot from March 1 `gpt-3.5-turbo-0301`. This allows developers to opt for specific model versions. This also means that the best practices for instructing models may change from version to version. 
+공식 OpenAI 문서에 따르면, `gpt-3.5-turbo` 모델의 스냅샷도 제공될 예정입니다. 예를 들어, 3월 1일 `gpt-3.5-turbo-0301`의 스냅샷에 액세스할 수 있습니다. 이를 통해 개발자는 특정 모델 버전을 선택할 수 있습니다. 이는 또한 모델 지침을 위한 모범 사례가 버전마다 변경될 수 있음을 의미합니다. 
 
-The current recommendation for `gpt-3.5-turbo-0301` is to add instructions in the `user` message as opposed to the available `system` message. 
+현재 `gpt-3.5-turbo-0301`에 대한 권장 사항은 사용 가능한 `system` 메시지가 아닌 `user` 메시지에 지침을 추가하는 것입니다. 
 
----
-## Python Notebooks
 
-|Description|Notebook|
+## 파이썬 노트북
+
+|설명|노트북|
 |--|--|
-|Learn more about how to make calls to the ChatGPT APIs using the `openai` library.|[ChatGPT API Intro](../notebooks/pe-chatgpt-intro.ipynb)|
-|Learn how to use ChatGPT features using the `LangChain` library. |[ChatGPT API with LangChain](../notebooks/pe-chatgpt-langchain.ipynb)|
+|`openai` 라이브러리를 사용해 ChatGPT API를 호출하는 방법에 대해 자세히 알아보세요.|[ChatGPT API 소개](../notebooks/pe-chatgpt-intro.ipynb)|
+|`LangChain` 라이브러리를 사용하여 ChatGPT 기능을 사용하는 방법을 알아보세요. |[LangChain을 이용한 ChatGPT API](../notebooks/pe-chatgpt-langchain.ipynb)|
 
 ---
 ## References
@@ -188,6 +180,6 @@ The current recommendation for `gpt-3.5-turbo-0301` is to add instructions in th
 - [Introducing ChatGPT](https://openai.com/blog/chatgpt) (Nov 2022)
 
 ---
-[Previous Section (Applications)](./prompts-applications.md)
+[이전 섹션(애플리케이션)](./prompts-applications.md)
 
-[Next Section (Adversarial Prompting)](./prompts-adversarial.md)
+[다음 섹션(적대적 프롬프트)](./prompts-adversarial.md)
